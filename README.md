@@ -1,5 +1,5 @@
 
-# SSDLNA(基于MRDLNA)
+# HQDLNA(基于MRDLNA)
 ![](https://img.shields.io/badge/project-iOS-blue.svg)
 ![](https://img.shields.io/badge/install-CocoaPods-orange.svg)
 ![](https://img.shields.io/badge/LANG-ObjC-brightgreen.svg)
