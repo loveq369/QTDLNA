@@ -87,6 +87,8 @@
 {
     self.render = [[CLUPnPRenderer alloc] initWithModel:self.device];
     self.render.delegate = self;
+    self.render.userAgent = self.userAgent;
+    self.render.referer = self.referer;
     [self.render setAVTransportURL:self.playUrl];
 }
 /**

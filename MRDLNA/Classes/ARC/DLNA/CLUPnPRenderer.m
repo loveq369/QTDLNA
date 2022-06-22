@@ -10,8 +10,6 @@
 #import "GDataXMLNode.h"
 #import "CLUPnPAction.h"
 
-#import "LBAirPlayManager.h"
-
 #define VideoDIDL @"<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:sec=\"http://www.sec.co.kr/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\"><item id=\"f-0\" parentID=\"0\" restricted=\"0\"><dc:title>Video</dc:title><dc:creator>Anonymous</dc:creator><upnp:class>object.item.videoItem</upnp:class><res protocolInfo=\"http-get:*:video/*:DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000\" sec:URIType=\"public\">%@</res></item></DIDL-Lite>"
 
 @implementation CLUPnPRenderer
@@ -164,11 +162,11 @@
 //添加User-Agent和referer（后续可能会效验）
 - (void)requestAddHqHeader:(NSMutableURLRequest *)request
 {
-    if ([LBAirPlayManager shareInstance].appId && [LBAirPlayManager shareInstance].appSeriesName) {
-        NSString *userAgent = [LBAirPlayManager hqUserAgentString];
-        NSString *referer = [LBAirPlayManager hqRefererString];
-        [request setValue:userAgent forHTTPHeaderField:@"User-Agent"];
-        [request setValue:referer forHTTPHeaderField:@"referer"];
+    if (self.userAgent.length) {
+        [request setValue:self.userAgent forHTTPHeaderField:@"User-Agent"];
+    }
+    if (self.referer.length) {
+        [request setValue:self.referer forHTTPHeaderField:@"referer"];
     }
 }
 

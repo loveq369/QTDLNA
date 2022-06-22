@@ -54,6 +54,9 @@ typedef NS_ENUM(NSInteger, DLNAPlayState) {
 
 @property (nonatomic, assign) BOOL isConnected;
 
+@property (nonatomic, copy) NSString *userAgent;
+@property (nonatomic, copy) NSString *referer;
+
 /**
  单例
  */
