@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SSDLNA'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = 'DLNA投屏'
 
 
@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'sillker' => '269055130@qq.com' }
   s.source           = { :git => 'https://github.com/sillker/SSDLNA.git', :tag => s.version}
-  s.social_media_url = 'http://cocomccree.cn/'
+  #s.social_media_url = 'http://cocomccree.cn/'
 
   s.platform     = :ios, "9.0"
 
