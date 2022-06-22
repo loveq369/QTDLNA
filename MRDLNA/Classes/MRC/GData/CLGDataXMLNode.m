@@ -23,11 +23,11 @@
 static const int kCLGDataXMLParseOptions = (XML_PARSE_NOCDATA | XML_PARSE_NOBLANKS);
 
 // dictionary key callbacks for string cache
-static const void *StringCacheKeyRetainCallBack(CFAllocatorRef allocator, const void *str);
-static void StringCacheKeyReleaseCallBack(CFAllocatorRef allocator, const void *str);
-static CFStringRef StringCacheKeyCopyDescriptionCallBack(const void *str);
-static Boolean StringCacheKeyEqualCallBack(const void *str1, const void *str2);
-static CFHashCode StringCacheKeyHashCallBack(const void *str);
+static const void *CLStringCacheKeyRetainCallBack(CFAllocatorRef allocator, const void *str);
+static void CLStringCacheKeyReleaseCallBack(CFAllocatorRef allocator, const void *str);
+static CFStringRef CLStringCacheKeyCopyDescriptionCallBack(const void *str);
+static Boolean CLStringCacheKeyEqualCallBack(const void *str1, const void *str2);
+static CFHashCode CLStringCacheKeyHashCallBack(const void *str);
 
 // isEqual: has the fatal flaw that it doesn't deal well with the received
 // being nil. We'll use this utility instead.
@@ -800,7 +800,7 @@ static xmlChar *CLSplitQNameReverse(const xmlChar *qname, xmlChar **prefix)
             // _def_ns
             const xmlChar *prefix = nsPtr->prefix;
             if (prefix == NULL) {
-              prefix = (xmlChar *) kGDataXMLXPathDefaultNamespacePrefix;
+              prefix = (xmlChar *) kCLGDataXMLXPathDefaultNamespacePrefix;
             }
 
             int result = xmlXPathRegisterNs(xpathCtx, prefix, nsPtr->href);
@@ -1752,11 +1752,11 @@ static xmlChar *CLSplitQNameReverse(const xmlChar *qname, xmlChar **prefix)
 
   CFDictionaryKeyCallBacks keyCallBacks = {
     0, // version
-    StringCacheKeyRetainCallBack,
-    StringCacheKeyReleaseCallBack,
-    StringCacheKeyCopyDescriptionCallBack,
-    StringCacheKeyEqualCallBack,
-    StringCacheKeyHashCallBack
+    CLStringCacheKeyRetainCallBack,
+    CLStringCacheKeyReleaseCallBack,
+    CLStringCacheKeyCopyDescriptionCallBack,
+    CLStringCacheKeyEqualCallBack,
+    CLStringCacheKeyHashCallBack
   };
 
   CFMutableDictionaryRef dict = CFDictionaryCreateMutable(
@@ -1878,21 +1878,21 @@ static xmlChar *CLSplitQNameReverse(const xmlChar *qname, xmlChar **prefix)
 //
 // Dictionary key callbacks for our C-string to NSString cache dictionary
 //
-static const void *StringCacheKeyRetainCallBack(CFAllocatorRef allocator, const void *str)
+static const void *CLStringCacheKeyRetainCallBack(CFAllocatorRef allocator, const void *str)
 {
   // copy the key
   xmlChar *key = xmlStrdup(str);
   return key;
 }
 
-static void StringCacheKeyReleaseCallBack(CFAllocatorRef allocator, const void *str)
+static void CLStringCacheKeyReleaseCallBack(CFAllocatorRef allocator, const void *str)
 {
   // free the key
   char *chars = (char *)str;
   xmlFree((char *) chars);
 }
 
-static CFStringRef StringCacheKeyCopyDescriptionCallBack(const void *str)
+static CFStringRef CLStringCacheKeyCopyDescriptionCallBack(const void *str)
 {
   // make a CFString from the key
   CFStringRef cfStr = CFStringCreateWithCString(kCFAllocatorDefault,
@@ -1901,7 +1901,7 @@ static CFStringRef StringCacheKeyCopyDescriptionCallBack(const void *str)
   return cfStr;
 }
 
-static Boolean StringCacheKeyEqualCallBack(const void *str1, const void *str2)
+static Boolean CLStringCacheKeyEqualCallBack(const void *str1, const void *str2)
 {
   // compare the key strings
     if (str1 == str2) {
@@ -1911,7 +1911,7 @@ static Boolean StringCacheKeyEqualCallBack(const void *str1, const void *str2)
   return (result == 0);
 }
 
-static CFHashCode StringCacheKeyHashCallBack(const void *str)
+static CFHashCode CLStringCacheKeyHashCallBack(const void *str)
 {
 
   // dhb hash, per http://www.cse.yorku.ca/~oz/hash.html
