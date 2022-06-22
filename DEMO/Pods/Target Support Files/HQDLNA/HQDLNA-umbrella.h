@@ -21,6 +21,6 @@
 #import "MRDLNA.h"
 #import "GDataXMLNode.h"
 
-FOUNDATION_EXPORT double MRDLNAVersionNumber;
-FOUNDATION_EXPORT const unsigned char MRDLNAVersionString[];
+FOUNDATION_EXPORT double HQDLNAVersionNumber;
+FOUNDATION_EXPORT const unsigned char HQDLNAVersionString[];
 

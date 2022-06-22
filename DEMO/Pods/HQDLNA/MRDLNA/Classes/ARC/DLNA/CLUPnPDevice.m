@@ -11,28 +11,32 @@
 
 @implementation CLUPnPDevice
 
-- (CLServiceModel *)AVTransport{
+- (CLServiceModel *)AVTransport
+{
     if (!_AVTransport) {
         _AVTransport = [[CLServiceModel alloc] init];
     }
     return _AVTransport;
 }
 
-- (CLServiceModel *)RenderingControl{
+- (CLServiceModel *)RenderingControl
+{
     if (!_RenderingControl) {
         _RenderingControl = [[CLServiceModel alloc] init];
     }
     return _RenderingControl;
 }
 
-- (NSString *)URLHeader{
+- (NSString *)URLHeader
+{
     if (!_URLHeader) {
         _URLHeader = [NSString stringWithFormat:@"%@://%@:%@", [self.loaction scheme], [self.loaction host], [self.loaction port]];
     }
     return _URLHeader;
 }
 
-- (void)setArray:(NSArray *)array{
+- (void)setArray:(NSArray *)array
+{
     @autoreleasepool {
         for (int j = 0; j < [array count]; j++) {
             GDataXMLElement *ele = [array objectAtIndex:j];
@@ -64,7 +68,8 @@
     }
 }
 
-- (NSString *)description{
+- (NSString *)description
+{
     NSString * string = [NSString stringWithFormat:@"\nuuid:%@\nlocation:%@\nURLHeader:%@\nfriendlyName:%@\nmodelName:%@\n",self.uuid,self.loaction,self.URLHeader,self.friendlyName,self.modelName];
     return string;
 }
@@ -73,7 +78,8 @@
 
 @implementation CLServiceModel
 
-- (void)setArray:(NSArray *)array{
+- (void)setArray:(NSArray *)array
+{
     @autoreleasepool {
         for (int m = 0; m < array.count; m++) {
             GDataXMLElement *needEle = [array objectAtIndex:m];

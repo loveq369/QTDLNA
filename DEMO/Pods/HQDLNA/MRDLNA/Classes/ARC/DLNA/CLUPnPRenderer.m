@@ -14,7 +14,8 @@
 
 @implementation CLUPnPRenderer
 
-- (instancetype)initWithModel:(CLUPnPDevice *)model{
+- (instancetype)initWithModel:(CLUPnPDevice *)model
+{
     self = [super init];
     if (self) {
         _model = model;
@@ -22,13 +23,15 @@
     return self;
 }
 
-- (void)setModel:(CLUPnPDevice *)model{
+- (void)setModel:(CLUPnPDevice *)model
+{
     _model = model;
 }
 
 #pragma mark -
 #pragma mark -- AVTransport动作 --
-- (void)setAVTransportURL:(NSString *)urlStr{
+- (void)setAVTransportURL:(NSString *)urlStr
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"SetAVTransportURI"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [action setArgumentValue:urlStr forName:@"CurrentURI"];
@@ -36,7 +39,8 @@
     [self postRequestWith:action];
 }
 
-- (void)setNextAVTransportURI:(NSString *)urlStr{
+- (void)setNextAVTransportURI:(NSString *)urlStr
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"SetNextAVTransportURI"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [action setArgumentValue:urlStr forName:@"NextURI"];
@@ -45,54 +49,63 @@
     
 }
 
-- (void)play{
+- (void)play
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"Play"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [action setArgumentValue:@"1" forName:@"Speed"];
     [self postRequestWith:action];
 }
 
-- (void)pause{
+- (void)pause
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"Pause"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [self postRequestWith:action];
 }
 
-- (void)stop{
+- (void)stop
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"Stop"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [self postRequestWith:action];
 }
 
-- (void)next{
+- (void)next
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"Next"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [self postRequestWith:action];
 }
 
-- (void)previous{
+- (void)previous
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"Previous"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [self postRequestWith:action];
 }
 
-- (void)getPositionInfo{
+- (void)getPositionInfo
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"GetPositionInfo"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [self postRequestWith:action];
 }
 
-- (void)getTransportInfo{
+- (void)getTransportInfo
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"GetTransportInfo"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [self postRequestWith:action];
 }
 
-- (void)seek:(float)relTime{
-    [self seekToTarget:[NSString stringWithDurationTime:relTime] Unit:unitREL_TIME];
+- (void)seek:(float)relTime
+{
+    [self seekToTarget:[NSString cl_stringWithDurationTime:relTime] Unit:unitREL_TIME];
 }
 
-- (void)seekToTarget:(NSString *)target Unit:(NSString *)unit{
+- (void)seekToTarget:(NSString *)target Unit:(NSString *)unit
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"Seek"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [action setArgumentValue:unit forName:@"Unit"];
@@ -102,17 +115,19 @@
 
 #pragma mark -
 #pragma mark -- RenderingControl动作 --
-- (void)getVolume{
+- (void)getVolume
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"GetVolume"];
-    [action setServiceType:CLUPnPServiceRenderingControl];
+    [action setServiceType:CLUPnPServiceTypeRenderingControl];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [action setArgumentValue:@"Master" forName:@"Channel"];
     [self postRequestWith:action];
 }
 
-- (void)setVolumeWith:(NSString *)value{
+- (void)setVolumeWith:(NSString *)value
+{
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"SetVolume"];
-    [action setServiceType:CLUPnPServiceRenderingControl];
+    [action setServiceType:CLUPnPServiceTypeRenderingControl];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [action setArgumentValue:@"Master" forName:@"Channel"];
     [action setArgumentValue:value forName:@"DesiredVolume"];
@@ -121,29 +136,44 @@
 
 #pragma mark -
 #pragma mark -- 发送动作请求 --
-- (void)postRequestWith:(CLUPnPAction *)action{
+- (void)postRequestWith:(CLUPnPAction *)action
+{
     NSURLSession *session = [NSURLSession sharedSession];
-    NSURL       *url = [NSURL URLWithString:[action getPostUrlStrWith:_model]];
-    NSString    *postXML = [action getPostXMLFile];
+    NSURL *url = [NSURL URLWithString:[action getPostUrlStrWith:_model]];
+    NSString *postXML = [action getPostXMLFile];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = @"POST";
     [request addValue:@"text/xml" forHTTPHeaderField:@"Content-Type"];
     [request addValue:[action getSOAPAction] forHTTPHeaderField:@"SOAPAction"];
+    
+    [self requestAddHqHeader:request];
+    
     request.HTTPBody = [postXML dataUsingEncoding:NSUTF8StringEncoding];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error || data == nil) {
             [self _UndefinedResponse:nil postXML:postXML];
             return;
-        }else{
+        } else {
             [self parseRequestResponseData:data postXML:postXML];
         }
     }];
     [dataTask resume];
 }
+//添加User-Agent和referer（后续可能会效验）
+- (void)requestAddHqHeader:(NSMutableURLRequest *)request
+{
+    if (self.userAgent.length) {
+        [request setValue:self.userAgent forHTTPHeaderField:@"User-Agent"];
+    }
+    if (self.referer.length) {
+        [request setValue:self.referer forHTTPHeaderField:@"referer"];
+    }
+}
 
 #pragma mark -
 #pragma mark -- 动作响应 --
-- (void)parseRequestResponseData:(NSData *)data postXML:(NSString *)postXML{
+- (void)parseRequestResponseData:(NSData *)data postXML:(NSString *)postXML
+{
     GDataXMLDocument *xmlDoc = [[GDataXMLDocument alloc] initWithData:data options:0 error:nil];
     GDataXMLElement *xmlEle = [xmlDoc rootElement];
     NSArray *bigArray = [xmlEle children];
@@ -152,41 +182,42 @@
         NSArray *needArr = [element children];
         if ([[element name] hasSuffix:@"Body"]) {
             [self resultsWith:needArr postXML:postXML];
-        }else{
+        } else {
             [self _UndefinedResponse:[xmlEle XMLString] postXML:postXML];
         }
     }
 }
 
-- (void)resultsWith:(NSArray *)array postXML:(NSString *)postXML{
+- (void)resultsWith:(NSArray *)array postXML:(NSString *)postXML
+{
     for (int i = 0; i < array.count; i++) {
         GDataXMLElement *ele = [array objectAtIndex:i];
         if ([[ele name] hasSuffix:@"SetAVTransportURIResponse"]) {
             [self _SetAVTransportURIResponse];
             [self getTransportInfo];
-        }else if ([[ele name] hasSuffix:@"SetNextAVTransportURIResponse"]){
+        } else if ([[ele name] hasSuffix:@"SetNextAVTransportURIResponse"]) {
             [self _SetNextAVTransportURIResponse];
-        }else if ([[ele name] hasSuffix:@"PauseResponse"]){
+        } else if ([[ele name] hasSuffix:@"PauseResponse"]) {
             [self _PauseResponse];
-        }else if ([[ele name] hasSuffix:@"PlayResponse"]){
+        } else if ([[ele name] hasSuffix:@"PlayResponse"]) {
             [self _PlayResponse];
-        }else if ([[ele name] hasSuffix:@"StopResponse"]){
+        } else if ([[ele name] hasSuffix:@"StopResponse"]) {
             [self _StopResponse];
-        }else if ([[ele name] hasSuffix:@"SeekResponse"]){
+        } else if ([[ele name] hasSuffix:@"SeekResponse"]) {
             [self _SeekResponse];
-        }else if ([[ele name] hasSuffix:@"NextResponse"]){
+        } else if ([[ele name] hasSuffix:@"NextResponse"]) {
             [self _NextResponse];
-        }else if ([[ele name] hasSuffix:@"PreviousResponse"]){
+        } else if ([[ele name] hasSuffix:@"PreviousResponse"]) {
             [self _PreviousResponse];
-        }else if ([[ele name] hasSuffix:@"SetVolumeResponse"]){
+        } else if ([[ele name] hasSuffix:@"SetVolumeResponse"]) {
             [self _SetVolumeResponse];
-        }else if ([[ele name] hasSuffix:@"GetVolumeResponse"]){
+        } else if ([[ele name] hasSuffix:@"GetVolumeResponse"]) {
             [self _GetVolumeSuccessWith:[ele children]];
-        }else if ([[ele name] hasSuffix:@"GetPositionInfoResponse"]){
+        } else if ([[ele name] hasSuffix:@"GetPositionInfoResponse"]) {
             [self _GetPositionInfoResponseWith:[ele children]];
-        }else if ([[ele name] hasSuffix:@"GetTransportInfoResponse"]){
+        } else if ([[ele name] hasSuffix:@"GetTransportInfoResponse"]) {
             [self _GetTransportInfoResponseWith:[ele children]];
-        }else{
+        } else {
             [self _UndefinedResponse:[ele XMLString] postXML:postXML];
         }
     }
@@ -194,61 +225,71 @@
 
 #pragma mark -
 #pragma mark -- 回调协议 --
-- (void)_SetAVTransportURIResponse{
+- (void)_SetAVTransportURIResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpSetAVTransportURIResponse)]) {
         [self.delegate upnpSetAVTransportURIResponse];
     }
 }
 
-- (void)_SetNextAVTransportURIResponse{
+- (void)_SetNextAVTransportURIResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpSetNextAVTransportURIResponse)]) {
         [self.delegate upnpSetNextAVTransportURIResponse];
     }
 }
 
-- (void)_PauseResponse{
+- (void)_PauseResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpPauseResponse)]) {
         [self.delegate upnpPauseResponse];
     }
 }
 
-- (void)_PlayResponse{
+- (void)_PlayResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpPlayResponse)]) {
         [self.delegate upnpPlayResponse];
     }
 }
 
-- (void)_StopResponse{
+- (void)_StopResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpStopResponse)]) {
         [self.delegate upnpStopResponse];
     }
 }
 
-- (void)_SeekResponse{
+- (void)_SeekResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpSeekResponse)]) {
         [self.delegate upnpSeekResponse];
     }
 }
 
-- (void)_NextResponse{
+- (void)_NextResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpNextResponse)]) {
         [self.delegate upnpNextResponse];
     }
 }
 
-- (void)_PreviousResponse{
+- (void)_PreviousResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpPreviousResponse)]) {
         [self.delegate upnpPreviousResponse];
     }
 }
 
-- (void)_SetVolumeResponse{
+- (void)_SetVolumeResponse
+{
     if ([self.delegate respondsToSelector:@selector(upnpSetVolumeResponse)]) {
         [self.delegate upnpSetVolumeResponse];
     }
 }
 
-- (void)_GetVolumeSuccessWith:(NSArray *)array{
+- (void)_GetVolumeSuccessWith:(NSArray *)array
+{
     for (int j = 0; j < array.count; j++) {
         GDataXMLElement *eleXml = [array objectAtIndex:j];
         if ([[eleXml name] isEqualToString:@"CurrentVolume"]) {
@@ -259,7 +300,8 @@
     }
 }
 
-- (void)_GetPositionInfoResponseWith:(NSArray *)array{
+- (void)_GetPositionInfoResponseWith:(NSArray *)array
+{
     CLUPnPAVPositionInfo *info = [[CLUPnPAVPositionInfo alloc] init];
     [info setArray:array];
     if ([self.delegate respondsToSelector:@selector(upnpGetPositionInfoResponse:)]) {
@@ -267,7 +309,8 @@
     }
 }
 
-- (void)_GetTransportInfoResponseWith:(NSArray *)array{
+- (void)_GetTransportInfoResponseWith:(NSArray *)array
+{
     CLUPnPTransportInfo *info = [[CLUPnPTransportInfo alloc] init];
     [info setArray:array];
     if ([self.delegate respondsToSelector:@selector(upnpGetTransportInfoResponse:)]) {
@@ -275,7 +318,8 @@
     }
 }
 
-- (void)_UndefinedResponse:(NSString *)xmlStr postXML:(NSString *)postXML{
+- (void)_UndefinedResponse:(NSString *)xmlStr postXML:(NSString *)postXML
+{
     NSLog(@"===========发送信息:%@ \n",postXML);
     NSLog(@"===========响应信息:%@ \n",xmlStr);
     if ([self.delegate respondsToSelector:@selector(upnpUndefinedResponse:postXML:)]) {

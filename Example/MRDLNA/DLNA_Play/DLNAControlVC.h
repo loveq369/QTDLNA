@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <MRDLNA/MRDLNA.h>
+#import "MRDLNA.h"
 
 @interface DLNAControlVC : UIViewController
 

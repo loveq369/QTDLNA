@@ -9,17 +9,17 @@
 #import "CLUPnPRenderer.h"
 
 @interface StopAction ()<CLUPnPResponseDelegate>
-@property (nonatomic, copy) void(^successCallback)();
-@property (nonatomic, copy) void(^failureCallback)();
+@property (nonatomic, copy) void(^successCallback)(void);
+@property (nonatomic, copy) void(^failureCallback)(void);
 
-@property(nonatomic,strong) CLUPnPRenderer *render;         //MDR渲染器
+@property(nonatomic, strong) CLUPnPRenderer *render;//MDR渲染器
 
 @end
 @implementation StopAction
 @synthesize successCallback = _successCallback;
 @synthesize failureCallback = _failureCallback;
 
-- (instancetype)initWithDevice:(CLUPnPDevice *) device Success:(void(^)())successBlock failure:(void(^)())failureBlock
+- (instancetype)initWithDevice:(CLUPnPDevice *) device Success:(void(^)(void))successBlock failure:(void(^)(void))failureBlock
 {
     self = [self init];
     
@@ -31,17 +31,20 @@
 
     return self;
 }
--(void)executeAction{
+- (void)executeAction
+{
     [self.render stop];
 }
 
 #pragma mark CLUPnPResponseDelegate
-- (void)upnpPlayResponse{
+- (void)upnpPlayResponse
+{
     if (self.failureCallback) {
         self.failureCallback();
     }
 }
-- (void)upnpStopResponse{
+- (void)upnpStopResponse
+{
     if (self.successCallback) {
         self.successCallback();
     }

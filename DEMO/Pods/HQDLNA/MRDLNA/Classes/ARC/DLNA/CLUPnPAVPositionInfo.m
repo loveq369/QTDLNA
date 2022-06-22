@@ -11,18 +11,19 @@
 
 @implementation CLUPnPAVPositionInfo
 
-- (void)setArray:(NSArray *)array{
+- (void)setArray:(NSArray *)array
+{
     @autoreleasepool {
         for (int m = 0; m < array.count; m++) {
             GDataXMLElement *needEle = [array objectAtIndex:m];
             if ([needEle.name isEqualToString:@"TrackDuration"]) {
-                self.trackDuration = [[needEle stringValue] durationTime];
+                self.trackDuration = [[needEle stringValue] cl_durationTime];
             }
             if ([needEle.name isEqualToString:@"RelTime"]) {
-                self.relTime = [[needEle stringValue] durationTime];
+                self.relTime = [[needEle stringValue] cl_durationTime];
             }
             if ([needEle.name isEqualToString:@"AbsTime"]) {
-                self.absTime = [[needEle stringValue] durationTime];
+                self.absTime = [[needEle stringValue] cl_durationTime];
             }
         }
     }
@@ -32,7 +33,8 @@
 
 @implementation CLUPnPTransportInfo
 
-- (void)setArray:(NSArray *)array{
+- (void)setArray:(NSArray *)array
+{
     @autoreleasepool {        
         for (int m = 0; m < array.count; m++) {
             GDataXMLElement *needEle = [array objectAtIndex:m];
@@ -62,7 +64,7 @@
  •	[.F+] means optionally a dot followed by one or more digits to indicate fractions of seconds
  •	[.F0/F1] means optionally a dot followed by a fraction, with F0 and F1 at least one digit long, and F0 < F1
  */
-+(NSString *)stringWithDurationTime:(float)timeValue
++ (NSString *)cl_stringWithDurationTime:(float)timeValue
 {
     return [NSString stringWithFormat:@"%02d:%02d:%02d",
             (int)(timeValue / 3600.0),
@@ -70,12 +72,13 @@
             (int)fmod(timeValue, 60.0)];
 }
 
-- (float)durationTime
+- (float)cl_durationTime
 {
     NSArray *timeStrings = [self componentsSeparatedByString:@":"];
     int timeStringsCount = (int)[timeStrings count];
-    if (timeStringsCount < 3)
+    if (timeStringsCount < 3) {
         return -1.0f;
+    }
     float durationTime = 0.0;
     for (int n = 0; n<timeStringsCount; n++) {
         NSString *timeString = [timeStrings objectAtIndex:n];

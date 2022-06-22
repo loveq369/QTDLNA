@@ -7,7 +7,7 @@
 //
 
 #import "CLUPnPAVPositionInfo.h"
-#import "GDataXMLNode.h"
+#import "CLGDataXMLNode.h"
 
 @implementation CLUPnPAVPositionInfo
 
@@ -15,7 +15,7 @@
 {
     @autoreleasepool {
         for (int m = 0; m < array.count; m++) {
-            GDataXMLElement *needEle = [array objectAtIndex:m];
+            CLGDataXMLElement *needEle = [array objectAtIndex:m];
             if ([needEle.name isEqualToString:@"TrackDuration"]) {
                 self.trackDuration = [[needEle stringValue] cl_durationTime];
             }
@@ -37,7 +37,7 @@
 {
     @autoreleasepool {        
         for (int m = 0; m < array.count; m++) {
-            GDataXMLElement *needEle = [array objectAtIndex:m];
+            CLGDataXMLElement *needEle = [array objectAtIndex:m];
             if ([needEle.name isEqualToString:@"CurrentTransportState"]) {
                 self.currentTransportState = [needEle stringValue];
             }

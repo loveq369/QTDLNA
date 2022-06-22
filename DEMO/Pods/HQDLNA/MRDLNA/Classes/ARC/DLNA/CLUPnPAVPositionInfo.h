@@ -32,7 +32,7 @@
 
 @interface NSString(UPnP)
 
-+(NSString *)stringWithDurationTime:(float)timeValue;
-- (float)durationTime;
++ (NSString *)cl_stringWithDurationTime:(float)timeValue;
+- (float)cl_durationTime;
 
 @end

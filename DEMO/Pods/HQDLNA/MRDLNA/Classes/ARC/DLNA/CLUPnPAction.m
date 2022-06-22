@@ -19,53 +19,60 @@
 
 @implementation CLUPnPAction
 
-- (instancetype)initWithAction:(NSString *)action{
+- (instancetype)initWithAction:(NSString *)action
+{
     self = [super init];
     if (self) {
         _action = action;
-        _serviceType = CLUPnPServiceAVTransport;
+        _serviceType = CLUPnPServiceTypeAVTransport;
         NSString *name = [NSString stringWithFormat:@"u:%@", _action];
         self.XMLElement = [GDataXMLElement elementWithName:name];
     }
     return self;
 }
 
-- (void)setServiceType:(CLUPnPServiceType)serviceType{
+- (void)setServiceType:(CLUPnPServiceType)serviceType
+{
     _serviceType = serviceType;
 }
 
-- (void)setArgumentValue:(NSString *)value forName:(NSString *)name{
+- (void)setArgumentValue:(NSString *)value forName:(NSString *)name
+{
     [self.XMLElement addChild:[GDataXMLElement elementWithName:name stringValue:value]];
 }
 
-- (NSString *)getServiceType{
-    if (_serviceType == CLUPnPServiceAVTransport) {
+- (NSString *)getServiceType
+{
+    if (_serviceType == CLUPnPServiceTypeAVTransport) {
         return serviceType_AVTransport;
     }else{
         return serviceType_RenderingControl;
     }
 }
 
-- (NSString *)getSOAPAction{
-    if (_serviceType == CLUPnPServiceAVTransport) {
+- (NSString *)getSOAPAction
+{
+    if (_serviceType == CLUPnPServiceTypeAVTransport) {
         return [NSString stringWithFormat:@"\"%@#%@\"", serviceType_AVTransport, _action];
     }else{
         return [NSString stringWithFormat:@"\"%@#%@\"", serviceType_RenderingControl, _action];
     }
 }
 
-- (NSString *)getPostUrlStrWith:(CLUPnPDevice *)model{
-    if (_serviceType == CLUPnPServiceAVTransport) {
+- (NSString *)getPostUrlStrWith:(CLUPnPDevice *)model
+{
+    if (_serviceType == CLUPnPServiceTypeAVTransport) {
         return [self getUPnPURLWithUrlModel:model.AVTransport urlHeader:model.URLHeader];
     }else{
         return [self getUPnPURLWithUrlModel:model.RenderingControl urlHeader:model.URLHeader];;
     }
 }
 
-- (NSString *)getUPnPURLWithUrlModel:(CLServiceModel *)model urlHeader:(NSString *)urlHeader{
+- (NSString *)getUPnPURLWithUrlModel:(CLServiceModel *)model urlHeader:(NSString *)urlHeader
+{
     if ([[model.controlURL substringToIndex:1] isEqualToString:@"/"]) {
         return [NSString stringWithFormat:@"%@%@", urlHeader, model.controlURL];
-    }else{
+    } else {
         return [NSString stringWithFormat:@"%@/%@", urlHeader, model.controlURL];
     }
 }
@@ -74,7 +81,8 @@
  <DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:dlna=\"urn:schemas-dlna-org:metadata-1-0/\"><item id=\"0$1$1$17956\" parentID=\"parent\" restricted=\"1\"><dc:title>%s</dc:title><upnp:class>object.item.videoItem</upnp:class><res  protocolInfo=\"http-get:*:application/vnd.apple.mpegurl:*\">%s</res></item></DIDL-Lite>
  */
 
-- (NSString *)getPostXMLFile{
+- (NSString *)getPostXMLFile
+{
     GDataXMLElement *xmlEle = [GDataXMLElement elementWithName:@"s:Envelope"];
     [xmlEle addChild:[GDataXMLElement attributeWithName:@"s:encodingStyle" stringValue:@"http://schemas.xmlsoap.org/soap/encoding/"]];
     [xmlEle addChild:[GDataXMLElement attributeWithName:@"xmlns:s" stringValue:@"http://schemas.xmlsoap.org/soap/envelope/"]];

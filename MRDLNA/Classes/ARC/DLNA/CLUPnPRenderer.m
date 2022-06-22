@@ -7,7 +7,7 @@
 //
 
 #import "CLUPnP.h"
-#import "GDataXMLNode.h"
+#import "CLGDataXMLNode.h"
 #import "CLUPnPAction.h"
 
 #define VideoDIDL @"<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:sec=\"http://www.sec.co.kr/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\"><item id=\"f-0\" parentID=\"0\" restricted=\"0\"><dc:title>Video</dc:title><dc:creator>Anonymous</dc:creator><upnp:class>object.item.videoItem</upnp:class><res protocolInfo=\"http-get:*:video/*:DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000\" sec:URIType=\"public\">%@</res></item></DIDL-Lite>"
@@ -174,11 +174,11 @@
 #pragma mark -- 动作响应 --
 - (void)parseRequestResponseData:(NSData *)data postXML:(NSString *)postXML
 {
-    GDataXMLDocument *xmlDoc = [[GDataXMLDocument alloc] initWithData:data options:0 error:nil];
-    GDataXMLElement *xmlEle = [xmlDoc rootElement];
+    CLGDataXMLDocument *xmlDoc = [[CLGDataXMLDocument alloc] initWithData:data options:0 error:nil];
+    CLGDataXMLElement *xmlEle = [xmlDoc rootElement];
     NSArray *bigArray = [xmlEle children];
     for (int i = 0; i < [bigArray count]; i++) {
-        GDataXMLElement *element = [bigArray objectAtIndex:i];
+        CLGDataXMLElement *element = [bigArray objectAtIndex:i];
         NSArray *needArr = [element children];
         if ([[element name] hasSuffix:@"Body"]) {
             [self resultsWith:needArr postXML:postXML];
@@ -191,7 +191,7 @@
 - (void)resultsWith:(NSArray *)array postXML:(NSString *)postXML
 {
     for (int i = 0; i < array.count; i++) {
-        GDataXMLElement *ele = [array objectAtIndex:i];
+        CLGDataXMLElement *ele = [array objectAtIndex:i];
         if ([[ele name] hasSuffix:@"SetAVTransportURIResponse"]) {
             [self _SetAVTransportURIResponse];
             [self getTransportInfo];
@@ -291,7 +291,7 @@
 - (void)_GetVolumeSuccessWith:(NSArray *)array
 {
     for (int j = 0; j < array.count; j++) {
-        GDataXMLElement *eleXml = [array objectAtIndex:j];
+        CLGDataXMLElement *eleXml = [array objectAtIndex:j];
         if ([[eleXml name] isEqualToString:@"CurrentVolume"]) {
             if ([self.delegate respondsToSelector:@selector(upnpGetVolumeResponse:)]) {
                 [self.delegate upnpGetVolumeResponse:[eleXml stringValue]];

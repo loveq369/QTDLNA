@@ -1,3 +1,4 @@
+
 /* Copyright (c) 2008 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,27 +76,27 @@ _EXTERN const char* kGDataXMLXPathDefaultNamespacePrefix _INITIALIZE_AS("_def_ns
 //  + (id)nodeConsumingXMLNode:(xmlNodePtr)theXMLNode;
 
 @class NSArray, NSDictionary, NSError, NSString, NSURL;
-@class GDataXMLElement, GDataXMLDocument;
+@class CLGDataXMLElement, CLGDataXMLDocument;
 
 enum {
-  GDataXMLInvalidKind = 0,
-  GDataXMLDocumentKind,
-  GDataXMLElementKind,
-  GDataXMLAttributeKind,
-  GDataXMLNamespaceKind,
-  GDataXMLProcessingInstructionKind,
-  GDataXMLCommentKind,
-  GDataXMLTextKind,
-  GDataXMLDTDKind,
-  GDataXMLEntityDeclarationKind,
-  GDataXMLAttributeDeclarationKind,
-  GDataXMLElementDeclarationKind,
-  GDataXMLNotationDeclarationKind
+    CLGDataXMLInvalidKind = 0,
+    CLGDataXMLDocumentKind,
+    CLGDataXMLElementKind,
+    CLGDataXMLAttributeKind,
+    CLGDataXMLNamespaceKind,
+    CLGDataXMLProcessingInstructionKind,
+    CLGDataXMLCommentKind,
+    CLGDataXMLTextKind,
+    CLGDataXMLDTDKind,
+    CLGDataXMLEntityDeclarationKind,
+    CLGDataXMLAttributeDeclarationKind,
+    CLGDataXMLElementDeclarationKind,
+    CLGDataXMLNotationDeclarationKind
 };
 
-typedef NSUInteger GDataXMLNodeKind;
+typedef NSUInteger CLGDataXMLNodeKind;
 
-@interface GDataXMLNode : NSObject {
+@interface CLGDataXMLNode : NSObject {
 @protected
   // NSXMLNodes can have a namespace URI or prefix even if not part
   // of a tree; xmlNodes cannot.  When we create nodes apart from
@@ -118,9 +119,9 @@ typedef NSUInteger GDataXMLNodeKind;
   NSArray *cachedAttributes_;
 }
 
-+ (GDataXMLElement *)elementWithName:(NSString *)name;
-+ (GDataXMLElement *)elementWithName:(NSString *)name stringValue:(NSString *)value;
-+ (GDataXMLElement *)elementWithName:(NSString *)name URI:(NSString *)value;
++ (CLGDataXMLElement *)elementWithName:(NSString *)name;
++ (CLGDataXMLElement *)elementWithName:(NSString *)name stringValue:(NSString *)value;
++ (CLGDataXMLElement *)elementWithName:(NSString *)name URI:(NSString *)value;
 
 + (id)attributeWithName:(NSString *)name stringValue:(NSString *)value;
 + (id)attributeWithName:(NSString *)name URI:(NSString *)attributeURI stringValue:(NSString *)value;
@@ -134,14 +135,14 @@ typedef NSUInteger GDataXMLNodeKind;
 
 - (NSUInteger)childCount;
 - (NSArray *)children;
-- (GDataXMLNode *)childAtIndex:(unsigned)index;
+- (CLGDataXMLNode *)childAtIndex:(unsigned)index;
 
 - (NSString *)localName;
 - (NSString *)name;
 - (NSString *)prefix;
 - (NSString *)URI;
 
-- (GDataXMLNodeKind)kind;
+- (CLGDataXMLNodeKind)kind;
 
 - (NSString *)XMLString;
 
@@ -166,39 +167,39 @@ typedef NSUInteger GDataXMLNodeKind;
 @end
 
 
-@interface GDataXMLElement : GDataXMLNode
+@interface CLGDataXMLElement : CLGDataXMLNode
 
 - (id)initWithXMLString:(NSString *)str error:(NSError **)error;
 
 - (NSArray *)namespaces;
 - (void)setNamespaces:(NSArray *)namespaces;
-- (void)addNamespace:(GDataXMLNode *)aNamespace;
+- (void)addNamespace:(CLGDataXMLNode *)aNamespace;
 
-- (void)addChild:(GDataXMLNode *)child;
-- (void)removeChild:(GDataXMLNode *)child;
+- (void)addChild:(CLGDataXMLNode *)child;
+- (void)removeChild:(CLGDataXMLNode *)child;
 
 - (NSArray *)elementsForName:(NSString *)name;
 - (NSArray *)elementsForLocalName:(NSString *)localName URI:(NSString *)URI;
 
 - (NSArray *)attributes;
-- (GDataXMLNode *)attributeForName:(NSString *)name;
-- (GDataXMLNode *)attributeForLocalName:(NSString *)name URI:(NSString *)attributeURI;
-- (void)addAttribute:(GDataXMLNode *)attribute;
+- (CLGDataXMLNode *)attributeForName:(NSString *)name;
+- (CLGDataXMLNode *)attributeForLocalName:(NSString *)name URI:(NSString *)attributeURI;
+- (void)addAttribute:(CLGDataXMLNode *)attribute;
 
 - (NSString *)resolvePrefixForNamespaceURI:(NSString *)namespaceURI;
 
 @end
 
-@interface GDataXMLDocument : NSObject {
+@interface CLGDataXMLDocument : NSObject {
 @protected
   xmlDoc* xmlDoc_; // strong; always free'd in dealloc
 }
 
 - (id)initWithXMLString:(NSString *)str options:(unsigned int)mask error:(NSError **)error;
 - (id)initWithData:(NSData *)data options:(unsigned int)mask error:(NSError **)error;
-- (id)initWithRootElement:(GDataXMLElement *)element;
+- (id)initWithRootElement:(CLGDataXMLElement *)element;
 
-- (GDataXMLElement *)rootElement;
+- (CLGDataXMLElement *)rootElement;
 
 - (NSData *)XMLData;
 

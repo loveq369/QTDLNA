@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSInteger, CLUPnPServiceType) {
-    CLUPnPServiceAVTransport,       // @"urn:schemas-upnp-org:service:AVTransport:1"
-    CLUPnPServiceRenderingControl,  // @"urn:schemas-upnp-org:service:RenderingControl:1"
+    CLUPnPServiceTypeAVTransport,       // @"urn:schemas-upnp-org:service:AVTransport:1"
+    CLUPnPServiceTypeRenderingControl,  // @"urn:schemas-upnp-org:service:RenderingControl:1"
 };
 
 @class CLUPnPDevice;

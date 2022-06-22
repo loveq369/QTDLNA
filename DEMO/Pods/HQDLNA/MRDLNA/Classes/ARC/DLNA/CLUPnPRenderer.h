@@ -17,6 +17,9 @@
 
 @property (nonatomic, strong) id<CLUPnPResponseDelegate>delegate;
 
+@property (nonatomic, copy) NSString *userAgent;
+@property (nonatomic, copy) NSString *referer;
+
 /**
  初始化
  @param model 搜索得到的UPnPModel

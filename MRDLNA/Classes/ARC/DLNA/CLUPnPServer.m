@@ -9,7 +9,7 @@
 #import "CLUPnP.h"
 #import "CLUPnPServer.h"
 #import "GCDAsyncUdpSocket.h"
-#import "GDataXMLNode.h"
+#import "CLGDataXMLNode.h"
 
 @interface CLUPnPServer ()<GCDAsyncUdpSocketDelegate>
 
@@ -280,12 +280,12 @@
                     device = [[CLUPnPDevice alloc] init];
                     device.loaction = URL;
                     device.uuid = usn;
-                    GDataXMLDocument *xmlDoc = [[GDataXMLDocument alloc] initWithData:data options:0 error:nil];
-                    GDataXMLElement *xmlEle = [xmlDoc rootElement];
+                    CLGDataXMLDocument *xmlDoc = [[CLGDataXMLDocument alloc] initWithData:data options:0 error:nil];
+                    CLGDataXMLElement *xmlEle = [xmlDoc rootElement];
                     NSArray *xmlArray = [xmlEle children];
                     
                     for (int i = 0; i < [xmlArray count]; i++) {
-                        GDataXMLElement *element = [xmlArray objectAtIndex:i];
+                        CLGDataXMLElement *element = [xmlArray objectAtIndex:i];
                         if ([[element name] isEqualToString:@"device"]) {
                             [device setArray:[element children]];
                             continue;

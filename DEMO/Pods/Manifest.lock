@@ -1,23 +1,23 @@
 PODS:
-  - CocoaAsyncSocket (7.6.3)
-  - MRDLNA (0.1.1):
+  - CocoaAsyncSocket (7.6.5)
+  - HQDLNA (0.1.3):
     - CocoaAsyncSocket
-    - MRDLNA/MRC (= 0.1.1)
-  - MRDLNA/MRC (0.1.1):
+    - HQDLNA/MRC (= 0.1.3)
+  - HQDLNA/MRC (0.1.3):
     - CocoaAsyncSocket
 
 DEPENDENCIES:
-  - MRDLNA
+  - HQDLNA
 
 SPEC REPOS:
   trunk:
     - CocoaAsyncSocket
-    - MRDLNA
+    - HQDLNA
 
 SPEC CHECKSUMS:
-  CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
-  MRDLNA: 3fe35c6ac57c946413d07896faeb9101c4d8853d
+  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  HQDLNA: 3995634f0c0774ed25024ea1ee44ce7a763897d6
 
-PODFILE CHECKSUM: 8018d49e011345a01316aecc97529f44854f0884
+PODFILE CHECKSUM: 47f8a3442f5885068b68e1e0b16e73db4e041551
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.0

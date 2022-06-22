@@ -7,7 +7,7 @@
 //
 
 #import "DLNAControlVC.h"
-#import <MRDLNA/MRDLNA.h>
+#import "MRDLNA.h"
 
 
 //屏幕高度

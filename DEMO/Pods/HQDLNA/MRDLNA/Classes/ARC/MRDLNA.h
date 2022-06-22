@@ -9,6 +9,15 @@
 #import "CLUPnP.h"
 #import "CLUPnPDevice.h"
 
+typedef NS_ENUM(NSInteger, DLNAPlayState) {
+    DLNAPlayStateUnkown = 0,
+    DLNAPlayStatePlaying = 1,
+    DLNAPlayStatePause = 2,
+    DLNAPlayStateStopped = 3,
+    DLNAPlayStateCommpleted = 4,
+    DLNAPlayStateError = 5,
+};
+
 @protocol DLNADelegate <NSObject>
 
 @optional
@@ -18,33 +27,50 @@
  */
 - (void)searchDLNAResult:(NSArray *)devicesArray;
 
+/// DLNA局域网搜索设备出错
+- (void)searchDLNAFailue:(NSError *)error;
 
-/**
- 投屏成功开始播放
- */
+- (void)didConnentToService:(CLUPnPServer *)service;
+- (void)didNotConnentWithError:(NSError *)error;
+- (void)didCloseConnentWithError:(NSError *)error;
+
+///投屏成功开始播放
 - (void)dlnaStartPlay;
+
+- (void)dlnaDidChangePlayState:(DLNAPlayState)state;
+- (void)dlnaPositionInfo:(CLUPnPAVPositionInfo *)info;
 
 @end
 
 @interface MRDLNA : NSObject
 
-@property(nonatomic,weak)id<DLNADelegate> delegate;
+@property(nonatomic, weak)id<DLNADelegate> delegate;
 
 @property(nonatomic, strong) CLUPnPDevice *device;
 
-@property(nonatomic,copy) NSString *playUrl;
+@property(nonatomic, copy) NSString *playUrl;
 
-@property(nonatomic,assign) NSInteger searchTime;
+@property(nonatomic, assign) NSInteger searchTime;
+
+@property (nonatomic, assign) BOOL isConnected;
+
+@property (nonatomic, copy) NSString *userAgent;
+@property (nonatomic, copy) NSString *referer;
 
 /**
  单例
  */
-+(instancetype)sharedMRDLNAManager;
++ (instancetype)sharedMRDLNAManager;
 
 /**
  搜设备
  */
 - (void)startSearch;
+
+/**
+ 停止搜设备
+ */
+- (void)stopSearch;
 
 /**
  DLNA投屏

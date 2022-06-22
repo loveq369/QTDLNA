@@ -11,7 +11,7 @@ The original TCP version (AsyncSocket) was created by Dustin Voss in January 200
 Updated and maintained by Deusty LLC and the Apple development community.
 
 
-## MRDLNA
+## HQDLNA
 
 MIT License
 

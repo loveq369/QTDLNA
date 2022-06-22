@@ -19,9 +19,9 @@
 @property (nonatomic, strong) NSMutableDictionary<NSString *, CLUPnPDevice *> *deviceDictionary;
 
 #if OS_OBJECT_USE_OBJC
-@property (nonatomic, strong) dispatch_queue_t                          queue;
+@property (nonatomic, strong) dispatch_queue_t queue;
 #else
-@property (nonatomic, assign) dispatch_queue_t                          queue;
+@property (nonatomic, assign) dispatch_queue_t queue;
 #endif
 
 @property (nonatomic, assign) BOOL receiveDevice;
@@ -34,13 +34,15 @@
 
 @synthesize deviceDictionary = _deviceDictionary;
 
-- (void)dealloc{
+- (void)dealloc
+{
 #if !OS_OBJECT_USE_OBJC
     dispatch_release(_queue);
 #endif
 }
 
-+ (instancetype)shareServer{
++ (instancetype)shareServer
+{
     static CLUPnPServer *server;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -49,7 +51,8 @@
     return server;
 }
 
-- (instancetype)init{
+- (instancetype)init
+{
     self = [super init];
     if (self) {
         self.receiveDevice = YES;
@@ -60,74 +63,99 @@
     return self;
 }
 
-- (NSString *)getSearchString{
+- (NSString *)getSearchString
+{
     return [NSString stringWithFormat:@"M-SEARCH * HTTP/1.1\r\nHOST: %@:%d\r\nMAN: \"ssdp:discover\"\r\nMX: 3\r\nST: %@\r\nUSER-AGENT: iOS UPnP/1.1 mccree/1.0\r\n\r\n", ssdpAddres, ssdpPort, serviceType_AVTransport];
 }
 
-- (void)start{
+- (void)start
+{
     NSError *error = nil;
-    if (![_udpSocket bindToPort:ssdpPort error:&error]){
+    if (![_udpSocket bindToPort:ssdpPort error:&error]) {
         [self onError:error];
     }
     
-    if (![_udpSocket beginReceiving:&error])
-    {
+    if (![_udpSocket beginReceiving:&error]) {
         [self onError:error];
     }
     
-    if (![_udpSocket joinMulticastGroup:ssdpAddres error:&error])
-    {
+    if (![_udpSocket joinMulticastGroup:ssdpAddres error:&error]) {
         [self onError:error];
     }
     [self search];
 }
 
-- (void)stop{
+- (void)stop
+{
     [_udpSocket close];
 }
 
-- (void)search{
+- (void)search
+{
     // 搜索前先清空设备列表
     [self.deviceDictionary removeAllObjects];
     self.receiveDevice = YES;
     [self onChange];
-    NSData * sendData = [[self getSearchString] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *sendData = [[self getSearchString] dataUsingEncoding:NSUTF8StringEncoding];
     [_udpSocket sendData:sendData toHost:ssdpAddres port:ssdpPort withTimeout:-1 tag:1];
 }
 
-- (NSArray<CLUPnPDevice *> *)getDeviceList{
+- (NSArray<CLUPnPDevice *> *)getDeviceList
+{
     return self.deviceDictionary.allValues;
 }
 
 
-#pragma mark -- GCDAsyncUdpSocketDelegate --
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag{
-    CLLog(@"发送信息成功");
+#pragma mark -- GCDAsyncUdpSocketDelegate
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address
+{
+    CLLog(@"udpSocket连接成功----%@",address);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(upnpDidConnectToService:)]) {
+        [self.delegate upnpDidConnectToService:self];
+    }
+}
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error
+{
+    CLLog(@"udpSocket连接失败：%@", error);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(upnpDidNotConnectOnError:)]) {
+        [self.delegate upnpDidNotConnectOnError:error];
+    }
+}
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
+{
+    CLLog(@"udpSocket发送信息成功");
      __weak typeof (self) weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(weakSelf.searchTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         weakSelf.receiveDevice = NO;
-        CLLog(@"搜索结束");
+        CLLog(@"udpSocket搜索结束");
     });
 }
 
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError * _Nullable)error{
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError * _Nullable)error
+{
     [self onError:error];
 }
 
-- (void)udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError  * _Nullable)error{
-    CLLog(@"udpSocket关闭");
+- (void)udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError * _Nullable)error
+{
+    CLLog(@"udpSocket断开连接:%@", error);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(upnpDidCloseWithError:)]) {
+        [self.delegate upnpDidCloseWithError:error];
+    }
 }
 
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
-      fromAddress:(NSData *)address
-withFilterContext:(nullable id)filterContext{
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(nullable id)filterContext
+{
     [self JudgeDeviceWithData:data];
 }
 
 // 判断设备
-- (void)JudgeDeviceWithData:(NSData *)data{
+- (void)JudgeDeviceWithData:(NSData *)data
+{
     @autoreleasepool {
         NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        CLLog(@"udpSocket result:%@", string);
         if ([string hasPrefix:@"NOTIFY"]) {
             NSString *serviceType = [self headerValueForKey:@"NT:" inData:string];
             if ([serviceType isEqualToString:serviceType_AVTransport]) {
@@ -146,23 +174,22 @@ withFilterContext:(nullable id)filterContext{
                     CLLog(@"location = nil");
                     return;
                 }
-                if ([ssdp isEqualToString:@"ssdp:alive"])
-                {
+                if ([ssdp isEqualToString:@"ssdp:alive"]) {
                     dispatch_async(_queue, ^{
-                        if ([self.deviceDictionary objectForKey:usn] == nil)
-                        {
+                        if ([self.deviceDictionary objectForKey:usn] == nil) {
                             [self addDevice:[self getDeviceWithLocation:location withUSN:usn] forUSN:usn];
                         }
                     });
                 }
-                else if ([ssdp isEqualToString:@"ssdp:byebye"])
-                {
+                else if ([ssdp isEqualToString:@"ssdp:byebye"]) {
                     dispatch_async(_queue, ^{
                         [self removeDeviceWithUSN:usn];
                     });
                 }
             }
-        }else if ([string hasPrefix:@"HTTP/1.1"]){
+            
+        }
+        else if ([string hasPrefix:@"HTTP/1.1"]) {
             NSString *location = [self headerValueForKey:@"Location:" inData:string];
             NSString *usn = [self headerValueForKey:@"USN:" inData:string];
             if ([self isNilString:usn]) {
@@ -174,8 +201,7 @@ withFilterContext:(nullable id)filterContext{
                 return;
             }
             dispatch_async(_queue, ^{
-                if ([self.deviceDictionary objectForKey:usn] == nil)
-                {
+                if ([self.deviceDictionary objectForKey:usn] == nil) {
                     [self addDevice:[self getDeviceWithLocation:location withUSN:usn] forUSN:usn];
                 }
             });
@@ -185,7 +211,7 @@ withFilterContext:(nullable id)filterContext{
 
 - (void)addDevice:(CLUPnPDevice *)device forUSN:(NSString *)usn
 {
-    if (!device){
+    if (!device) {
         return;
     }
 //    NSLog(@"%@",device.description);
@@ -199,15 +225,17 @@ withFilterContext:(nullable id)filterContext{
     [self onChange];
 }
 
-- (void)onChange{
+- (void)onChange
+{
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.receiveDevice && self.delegate && [self.delegate respondsToSelector:@selector(upnpSearchChangeWithResults:)]){
+        if (self.receiveDevice && self.delegate && [self.delegate respondsToSelector:@selector(upnpSearchChangeWithResults:)]) {
             [self.delegate upnpSearchChangeWithResults:self.deviceDictionary.allValues];
         }
     });
 }
 
-- (void)onError:(NSError *)error{
+- (void)onError:(NSError *)error
+{
     if (self.delegate && [self.delegate respondsToSelector:@selector(upnpSearchErrorWithError:)]) {
         [self.delegate upnpSearchErrorWithError:error];
     }
@@ -221,7 +249,7 @@ withFilterContext:(nullable id)filterContext{
     
     NSRange keyRange = [str rangeOfString:key options:NSCaseInsensitiveSearch];
     
-    if (keyRange.location == NSNotFound){
+    if (keyRange.location == NSNotFound) {
         return @"";
     }
     
@@ -245,7 +273,7 @@ withFilterContext:(nullable id)filterContext{
     [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             [self onError:error];
-        }else{
+        } else {
             if (response != nil && data != nil) {
                 NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                 if ([httpResponse statusCode] == 200) {
@@ -272,15 +300,16 @@ withFilterContext:(nullable id)filterContext{
     return device;
 }
 
-- (BOOL)isNilString:(NSString *)_str{
-    if(_str == nil || _str == NULL || [_str isEqual:@"null"] || [_str isEqual:[NSNull null]] || [_str isKindOfClass:[NSNull class]]){
+- (BOOL)isNilString:(NSString *)_str
+{
+    if (_str == nil || _str == NULL || [_str isEqual:@"null"] || [_str isEqual:[NSNull null]] || [_str isKindOfClass:[NSNull class]]) {
         return YES;
     }
     if (![_str isKindOfClass:[NSString class]]) {
         return YES;
     }
     _str = [NSString stringWithFormat:@"%@", _str];
-    if([_str isEqualToString:@"(null)"]){
+    if ([_str isEqualToString:@"(null)"]) {
         return YES;
     }
     if ([_str isEqualToString:@""]) {
