@@ -138,6 +138,7 @@
 #pragma mark -- 发送动作请求 --
 - (void)postRequestWith:(CLUPnPAction *)action
 {
+    CLLog(@"CLUPnPAction--%@",action.getSOAPAction);
     NSURLSession *session = [NSURLSession sharedSession];
     NSURL *url = [NSURL URLWithString:[action getPostUrlStrWith:_model]];
     NSString *postXML = [action getPostXMLFile];

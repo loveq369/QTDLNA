@@ -48,6 +48,9 @@
 /// 停止
 - (void)stop;
 
+
+- (void)refresh;
+
 /// 搜索
 - (void)search;
 

@@ -99,6 +99,12 @@
     NSData *sendData = [[self getSearchString] dataUsingEncoding:NSUTF8StringEncoding];
     [_udpSocket sendData:sendData toHost:ssdpAddres port:ssdpPort withTimeout:-1 tag:1];
 }
+- (void)refresh
+{
+    [_udpSocket close];
+
+    [self start];
+}
 
 - (NSArray<CLUPnPDevice *> *)getDeviceList
 {
@@ -155,7 +161,7 @@
 {
     @autoreleasepool {
         NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        CLLog(@"udpSocket result:%@", string);
+//        CLLog(@"udpSocket result:%@", string);
         if ([string hasPrefix:@"NOTIFY"]) {
             NSString *serviceType = [self headerValueForKey:@"NT:" inData:string];
             if ([serviceType isEqualToString:serviceType_AVTransport]) {

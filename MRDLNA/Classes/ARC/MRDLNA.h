@@ -18,7 +18,7 @@ typedef NS_ENUM(NSInteger, DLNAPlayState) {
     DLNAPlayStateError = 5,
 };
 
-@protocol DLNADelegate <NSObject>
+@protocol DLNAConnentDelegate <NSObject>
 
 @optional
 /**
@@ -30,12 +30,20 @@ typedef NS_ENUM(NSInteger, DLNAPlayState) {
 /// DLNA局域网搜索设备出错
 - (void)searchDLNAFailue:(NSError *)error;
 
+
 - (void)didConnentToService:(CLUPnPServer *)service;
 - (void)didNotConnentWithError:(NSError *)error;
 - (void)didCloseConnentWithError:(NSError *)error;
 
+@end
+
+@protocol DLNAPlayDelegate <NSObject>
+
+@optional
+
 ///投屏成功开始播放
 - (void)dlnaStartPlay;
+- (void)dlnaEndPlay;
 
 - (void)dlnaDidChangePlayState:(DLNAPlayState)state;
 - (void)dlnaPositionInfo:(CLUPnPAVPositionInfo *)info;
@@ -44,7 +52,9 @@ typedef NS_ENUM(NSInteger, DLNAPlayState) {
 
 @interface MRDLNA : NSObject
 
-@property(nonatomic, weak)id<DLNADelegate> delegate;
+@property(nonatomic, weak) id<DLNAConnentDelegate> connentDelegate;
+
+@property(nonatomic, weak) id<DLNAPlayDelegate> playDelegate;
 
 @property(nonatomic, strong) CLUPnPDevice *device;
 
@@ -66,6 +76,8 @@ typedef NS_ENUM(NSInteger, DLNAPlayState) {
  搜设备
  */
 - (void)startSearch;
+
+- (void)refresSearch;
 
 /**
  停止搜设备
@@ -97,10 +109,13 @@ typedef NS_ENUM(NSInteger, DLNAPlayState) {
  */
 - (void)dlnaPause;
 
-/**
- 设置音量 volume建议传0-100之间字符串
- */
-- (void)volumeChanged:(NSString *)volume;
+///**
+// 设置音量 volume建议传0-100之间字符串
+// */
+//- (void)volumeChanged:(NSString *)volume;
+
+- (void)addVolume;
+- (void)reduceVolume;
 
 /**
  设置播放进度 seek单位是秒

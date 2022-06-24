@@ -53,6 +53,11 @@
     [self.upd start];
 }
 
+- (void)refresSearch
+{
+    [self.upd refresh];
+}
+
 - (void)stopSearch
 {
     [self.upd stop];
@@ -90,6 +95,8 @@
     self.render.userAgent = self.userAgent;
     self.render.referer = self.referer;
     [self.render setAVTransportURL:self.playUrl];
+    
+    [self.render getVolume];
 }
 /**
  退出DLNA
@@ -117,7 +124,7 @@
 }
 
 /**
- 设置音量
+ 设置音量 volume建议传0-100之间字符串
  */
 - (void)volumeChanged:(NSString *)volume
 {
@@ -125,6 +132,19 @@
     [self.render setVolumeWith:volume];
 }
 
+- (void)addVolume
+{
+    NSString *volume = [NSString stringWithFormat:@"%zd",MIN(self.volume.integerValue+1, 100)];
+    NSLog(@"addVolume :%@",volume);
+    [self volumeChanged:volume];
+}
+
+- (void)reduceVolume
+{
+    NSString *volume = [NSString stringWithFormat:@"%zd",MAX(self.volume.integerValue-1, 0)];
+    NSLog(@"reduceVolume :%@",volume);
+    [self volumeChanged:volume];
+}
 
 /**
  播放进度条
@@ -167,8 +187,10 @@
             [deviceMarr addObject:device];
         }
     }
-    if ([self.delegate respondsToSelector:@selector(searchDLNAResult:)]) {
-        [self.delegate searchDLNAResult:[deviceMarr copy]];
+    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(searchDLNAResult:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.connentDelegate searchDLNAResult:[deviceMarr copy]];
+        });
     }
     self.dataArray = deviceMarr;
 }
@@ -176,36 +198,49 @@
 - (void)upnpSearchErrorWithError:(NSError *)error
 {
 //    NSLog(@"DLNA_Error======>%@", error);
-    if (self.delegate && [self.delegate respondsToSelector:@selector(searchDLNAFailue:)]) {
-        [self.delegate searchDLNAFailue:error];
+    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(searchDLNAFailue:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.connentDelegate searchDLNAFailue:error];
+        });
     }
 }
 
 - (void)upnpDidConnectToService:(CLUPnPServer *)service
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didConnentToService:)]) {
-        [self.delegate didConnentToService:service];
+    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(didConnentToService:)]) {
+        [self.connentDelegate didConnentToService:service];
     }
 }
 
 - (void)upnpDidNotConnectOnError:(NSError *)error
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didNotConnentWithError:)]) {
-        [self.delegate didNotConnentWithError:error];
+    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(didNotConnentWithError:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.connentDelegate didNotConnentWithError:error];
+        });
     }
 }
 
 - (void)upnpDidCloseWithError:(NSError *)error
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didCloseConnentWithError:)]) {
-        [self.delegate didCloseConnentWithError:error];
+    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(didCloseConnentWithError:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.connentDelegate didCloseConnentWithError:error];
+        });
     }
 }
 
 #pragma mark - CLUPnPResponseDelegate
 - (void)upnpSetAVTransportURIResponse
 {
+    self.isConnected = YES;
     [self.render play];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.playDelegate && [self.playDelegate respondsToSelector:@selector(dlnaStartPlay)]) {
+            [self.playDelegate dlnaStartPlay];
+        }
+    });
 }
 
 - (void)upnpGetTransportInfoResponse:(CLUPnPTransportInfo *)info
@@ -213,16 +248,12 @@
 //    NSLog(@"%@ === %@", info.currentTransportState, info.currentTransportStatus);
     if (!([info.currentTransportState isEqualToString:@"PLAYING"] || [info.currentTransportState isEqualToString:@"TRANSITIONING"])) {
         [self.render play];
+
     }
 }
 
 - (void)upnpPlayResponse
 {
-    self.isConnected = YES;
-    if ([self.delegate respondsToSelector:@selector(dlnaStartPlay)]) {
-        [self.delegate dlnaStartPlay];
-    }
-    
     [self changePlayState:DLNAPlayStatePlaying];
 }
 
@@ -236,6 +267,12 @@
     self.isConnected = NO;
     
     [self changePlayState:DLNAPlayStateStopped];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.playDelegate && [self.playDelegate respondsToSelector:@selector(dlnaEndPlay)]) {
+            [self.playDelegate dlnaEndPlay];
+        }
+    });
 }
 
 - (void)upnpUndefinedResponse:(NSString *)resXML postXML:(NSString *)postXML
@@ -261,7 +298,7 @@
 
 - (void)upnpSetVolumeResponse
 {
-    
+    NSLog(@"upnpSetVolumeResponse : %@",self.volume);
 }
 
 - (void)upnpSetNextAVTransportURIResponse
@@ -269,18 +306,28 @@
     
 }
 
+- (void)upnpGetVolumeResponse:(NSString *)volume
+{
+    NSLog(@"upnpGetVolumeResponse : %@",volume);
+    _volume = volume;
+}
+
 - (void)upnpGetPositionInfoResponse:(CLUPnPAVPositionInfo *)info
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(dlnaPositionInfo:)]) {
-        [self.delegate dlnaPositionInfo:info];
+    if (self.playDelegate && [self.playDelegate respondsToSelector:@selector(dlnaPositionInfo:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.playDelegate dlnaPositionInfo:info];
+        });
     }
 }
 
 - (void)changePlayState:(DLNAPlayState)state
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(dlnaDidChangePlayState:)]) {
-        [self.delegate dlnaDidChangePlayState:state];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.playDelegate && [self.playDelegate respondsToSelector:@selector(dlnaDidChangePlayState:)]) {
+            [self.playDelegate dlnaDidChangePlayState:state];
+        }
+    });
 }
 
 #pragma mark Set&Get
