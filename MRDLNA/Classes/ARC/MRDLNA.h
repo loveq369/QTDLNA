@@ -30,10 +30,8 @@ typedef NS_ENUM(NSInteger, DLNAPlayState) {
 /// DLNA局域网搜索设备出错
 - (void)searchDLNAFailue:(NSError *)error;
 
-
-- (void)didConnentToService:(CLUPnPServer *)service;
-- (void)didNotConnentWithError:(NSError *)error;
-- (void)didCloseConnentWithError:(NSError *)error;
+/// DLNA局域网搜索设备完成
+- (void)searchDLNAFinish;
 
 @end
 

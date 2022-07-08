@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HQDLNA'
-  s.version          = '0.1.6'
+  s.version          = '0.1.7'
   s.summary          = 'DLNA投屏'
 
 
@@ -35,6 +35,7 @@ Pod::Spec.new do |s|
   s.libraries = 'icucore', 'c++', 'z', 'xml2'
   
   s.dependency 'CocoaAsyncSocket'
+  s.dependency 'CocoaLumberjack','~>3.0.0'
   
   s.xcconfig = {'ENABLE_BITCODE' => 'NO',
       'HEADER_SEARCH_PATHS' => '${SDKROOT}/usr/include/libxml2',

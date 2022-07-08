@@ -7,6 +7,7 @@
 
 #import "MRDLNA.h"
 #import "StopAction.h"
+#import "CLDDlogSetting.h"
 
 @interface MRDLNA()<CLUPnPServerDelegate, CLUPnPResponseDelegate>
 
@@ -17,6 +18,9 @@
 @property(nonatomic, copy) NSString *volume;
 @property(nonatomic, assign) NSInteger seekTime;
 @property(nonatomic, assign) BOOL isPlaying;
+
+
+@property (nonatomic, strong) NSTimer *timer;
 
 @end
 
@@ -44,22 +48,21 @@
     return self;
 }
 
-
-/**
- 搜设备
- */
 - (void)startSearch
 {
+    DDLogInfo(@"airPlay-startSearch");
     [self.upd start];
 }
 
 - (void)refresSearch
 {
+    DDLogInfo(@"airPlay-refresSearch");
     [self.upd refresh];
 }
 
 - (void)stopSearch
 {
+    DDLogInfo(@"airPlay-stopSearch");
     [self.upd stop];
 }
 
@@ -69,6 +72,7 @@
  */
 - (void)startDLNA
 {
+    DDLogInfo(@"airPlay-startDLNA");
     [self initCLUPnPRendererAndDlnaPlay];
 }
 /**
@@ -77,6 +81,7 @@
  */
 - (void)startDLNAAfterStop
 {
+    DDLogInfo(@"airPlay-startDLNAAfterStop");
     StopAction *action = [[StopAction alloc]initWithDevice:self.device Success:^{
         [self initCLUPnPRendererAndDlnaPlay];
         
@@ -85,25 +90,60 @@
     }];
     [action executeAction];
 }
+
+- (void)timerEvent:(NSTimer *)timer
+{
+//    if (self.duration > 0) {
+//        self.duration --;
+//    }else{
+//        self.duration = 10;
+//        [_timer invalidate];
+//        _timer = nil;
+//        self.isRefreshing = NO;
+//        [self.tableView reloadData];
+//        DDLogInfo(@"停止搜索");
+//    }
+    
+    [self.render getPositionInfo];
+}
+
+- (void)removeTimer
+{
+    [_timer invalidate];
+    _timer = nil;
+}
+
 /**
  初始化CLUPnPRenderer
  */
 - (void)initCLUPnPRendererAndDlnaPlay
 {
+    DDLogInfo(@"airPlay-initCLUPnPRendererAndDlnaPlay:%@",self.device.friendlyName);
     self.render = [[CLUPnPRenderer alloc] initWithModel:self.device];
     self.render.delegate = self;
     self.render.userAgent = self.userAgent;
     self.render.referer = self.referer;
+    
+//    [self.render stop];
     [self.render setAVTransportURL:self.playUrl];
     
     [self.render getVolume];
+    
+    if (!_timer) {
+        _timer = [NSTimer timerWithTimeInterval:2 target:self selector:@selector(timerEvent:) userInfo:nil repeats:YES];
+        [_timer fire];
+        [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
+    }
 }
 /**
  退出DLNA
  */
 - (void)endDLNA
 {
+    DDLogInfo(@"airPlay-endDLNA");
     [self.render stop];
+    
+    [self removeTimer];
 }
 
 /**
@@ -111,6 +151,7 @@
  */
 - (void)dlnaPlay
 {
+    DDLogInfo(@"airPlay-dlnaPlay");
     [self.render play];
 }
 
@@ -120,6 +161,7 @@
  */
 - (void)dlnaPause
 {
+    DDLogInfo(@"airPlay-dlnaPause");
     [self.render pause];
 }
 
@@ -134,15 +176,15 @@
 
 - (void)addVolume
 {
-    NSString *volume = [NSString stringWithFormat:@"%zd",MIN(self.volume.integerValue+1, 100)];
-    NSLog(@"addVolume :%@",volume);
+    NSString *volume = [NSString stringWithFormat:@"%zd",MIN(self.volume.integerValue+5, 100)];
+    DDLogInfo(@"airPlay-addVolume :%@",volume);
     [self volumeChanged:volume];
 }
 
 - (void)reduceVolume
 {
-    NSString *volume = [NSString stringWithFormat:@"%zd",MAX(self.volume.integerValue-1, 0)];
-    NSLog(@"reduceVolume :%@",volume);
+    NSString *volume = [NSString stringWithFormat:@"%zd",MAX(self.volume.integerValue-5, 0)];
+    DDLogInfo(@"airPlay-reduceVolume :%@",volume);
     [self volumeChanged:volume];
 }
 
@@ -151,6 +193,7 @@
  */
 - (void)seekChanged:(NSInteger)seek
 {
+    DDLogInfo(@"airPlay-seekChanged :%zd",seek);
     self.seekTime = seek;
     NSString *seekStr = [self timeFormatted:seek];
     [self.render seekToTarget:seekStr Unit:unitREL_TIME];
@@ -180,11 +223,14 @@
 #pragma mark -- 搜索协议CLUPnPDeviceDelegate回调
 - (void)upnpSearchChangeWithResults:(NSArray<CLUPnPDevice *> *)devices
 {
+    DDLogInfo(@"airPlay - 搜索到设备：%zd", devices.count);
     NSMutableArray *deviceMarr = [NSMutableArray array];
     for (CLUPnPDevice *device in devices) {
+        DDLogInfo(@"airPlay - 设备: %@, %@ - %@", device.uuid,device.friendlyName, device.modelName);
         // 只返回匹配到视频播放的设备
         if ([device.uuid containsString:serviceType_AVTransport]) {
             [deviceMarr addObject:device];
+            DDLogInfo(@"airPlay - 匹配:%@", device.friendlyName);
         }
     }
     if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(searchDLNAResult:)]) {
@@ -205,27 +251,11 @@
     }
 }
 
-- (void)upnpDidConnectToService:(CLUPnPServer *)service
+- (void)upnpDidEndSearch
 {
-    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(didConnentToService:)]) {
-        [self.connentDelegate didConnentToService:service];
-    }
-}
-
-- (void)upnpDidNotConnectOnError:(NSError *)error
-{
-    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(didNotConnentWithError:)]) {
+    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(searchDLNAFinish)]) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.connentDelegate didNotConnentWithError:error];
-        });
-    }
-}
-
-- (void)upnpDidCloseWithError:(NSError *)error
-{
-    if (self.connentDelegate && [self.connentDelegate respondsToSelector:@selector(didCloseConnentWithError:)]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.connentDelegate didCloseConnentWithError:error];
+            [self.connentDelegate searchDLNAFinish];
         });
     }
 }
@@ -250,6 +280,17 @@
         [self.render play];
 
     }
+//    if ([info.currentTransportState isEqualToString:@"PLAYING"]) {
+//        if (!_timer) {
+//            _timer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(timerEvent:) userInfo:nil repeats:YES];
+//            [_timer fire];
+//            [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
+//        }
+//    }
+//    if ([info.currentTransportState isEqualToString:@"STOPPED"]) {
+//        [_timer invalidate];
+//        _timer = nil;
+//    }
 }
 
 - (void)upnpPlayResponse
@@ -277,8 +318,13 @@
 
 - (void)upnpUndefinedResponse:(NSString *)resXML postXML:(NSString *)postXML
 {
-    CLLog(@"upnpUndefinedResponse :%@ - %@", resXML, postXML);
+    DDLogInfo(@"airPlay-DLNA -- upnpUndefinedResponse :%@ - %@", resXML, postXML);
     [self changePlayState:DLNAPlayStateError];
+}
+
+- (void)upnpErrorDomain:(NSError *)error
+{
+    
 }
 
 - (void)upnpSeekResponse
@@ -298,7 +344,7 @@
 
 - (void)upnpSetVolumeResponse
 {
-    NSLog(@"upnpSetVolumeResponse : %@",self.volume);
+    DDLogInfo(@"airPlay-upnpSetVolumeResponse : %@",self.volume);
 }
 
 - (void)upnpSetNextAVTransportURIResponse
@@ -308,7 +354,7 @@
 
 - (void)upnpGetVolumeResponse:(NSString *)volume
 {
-    NSLog(@"upnpGetVolumeResponse : %@",volume);
+    DDLogInfo(@"airPlay-upnpGetVolumeResponse : %@",volume);
     _volume = volume;
 }
 
@@ -319,6 +365,11 @@
             [self.playDelegate dlnaPositionInfo:info];
         });
     }
+    
+    if (info.trackDuration && info.trackDuration<=(info.relTime+2)) {//超过2s就无能为力了
+        [self removeTimer];
+        [self changePlayState:DLNAPlayStateCommpleted];
+    }
 }
 
 - (void)changePlayState:(DLNAPlayState)state
@@ -328,6 +379,10 @@
             [self.playDelegate dlnaDidChangePlayState:state];
         }
     });
+    
+//    if (state==DLNAPlayStateStopped || state==DLNAPlayStateError || state==DLNAPlayStateCommpleted) {
+//        [self removeTimer];
+//    }
 }
 
 #pragma mark Set&Get

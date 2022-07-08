@@ -8,14 +8,14 @@
 
 #import "DLNASearchVC.h"
 #import "DLNAControlVC.h"
-#import <MRDLNA/MRDLNA.h>
+#import "MRDLNA.h"
 
 
 //屏幕高度
 #define H [UIScreen mainScreen].bounds.size.height
 #define W [UIScreen mainScreen].bounds.size.width
 
-@interface DLNASearchVC ()<UITableViewDelegate, UITableViewDataSource, DLNADelegate>
+@interface DLNASearchVC ()<UITableViewDelegate, UITableViewDataSource, DLNAConnentDelegate>
 
 @property(nonatomic,strong) MRDLNA *dlnaManager;
 
@@ -33,7 +33,7 @@
     self.dlnaTable.frame = CGRectMake(0, 80, W, 300);
     [self.view addSubview:self.dlnaTable];
     self.dlnaManager = [MRDLNA sharedMRDLNAManager];
-    self.dlnaManager.delegate = self;
+    self.dlnaManager.connentDelegate = self;
 }
 
 

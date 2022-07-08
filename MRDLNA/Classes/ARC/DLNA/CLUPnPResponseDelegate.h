@@ -29,6 +29,11 @@
  */
 - (void)upnpUndefinedResponse:(NSString *)resXML postXML:(NSString *)postXML;
 
+/**
+ errorDomain错误的回调
+ */
+-(void)upnpErrorDomain:(NSError*)error;
+
 - (void)upnpPlayResponse;                   // 播放响应
 - (void)upnpPauseResponse;                  // 暂停响应
 - (void)upnpStopResponse;                   // 停止投屏

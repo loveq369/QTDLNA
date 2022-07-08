@@ -7,7 +7,7 @@
 //
 
 #import "DLNAControlVC.h"
-#import <MRDLNA/MRDLNA.h>
+#import "MRDLNA.h"
 
 
 //屏幕高度
@@ -73,7 +73,7 @@
 - (IBAction)volumeChange:(UISlider *)sender {
     NSString *vol = [NSString stringWithFormat:@"%.f",sender.value * 100];
     NSLog(@"音量========>: %@",vol);
-    [self.dlnaManager volumeChanged:vol];
+//    [self.dlnaManager volumeChanged:vol];
 }
 
 

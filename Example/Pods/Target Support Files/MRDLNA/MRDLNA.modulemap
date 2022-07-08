@@ -1,6 +1,0 @@
-framework module MRDLNA {
-  umbrella header "MRDLNA-umbrella.h"
-
-  export *
-  module * { export * }
-}

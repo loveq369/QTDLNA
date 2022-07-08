@@ -14,11 +14,11 @@
 #import "CLUPnPDevice.h"
 #import "CLUPnPAVPositionInfo.h"
 
-#ifdef DEBUG
-#define CLLog(s, ... ) NSLog( @"[%@ in line %d] => %@", [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
-#else
-#define CLLog(s, ... )
-#endif
+//#ifdef DEBUG
+//#define CLLog(s, ... ) NSLog( @"[%@ in line %d] => %@", [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
+//#else
+//#define CLLog(s, ... )
+//#endif
 
 //IPv4下的多播地址
 static NSString *ssdpAddres = @"239.255.255.250";

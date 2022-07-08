@@ -1,22 +1,38 @@
 PODS:
-  - CocoaAsyncSocket (7.6.3)
-  - MRDLNA (0.1.1):
+  - CocoaAsyncSocket (7.6.5)
+  - CocoaLumberjack (3.0.0):
+    - CocoaLumberjack/Default (= 3.0.0)
+    - CocoaLumberjack/Extensions (= 3.0.0)
+  - CocoaLumberjack/Core (3.0.0)
+  - CocoaLumberjack/Default (3.0.0):
+    - CocoaLumberjack/Core
+  - CocoaLumberjack/Extensions (3.0.0):
+    - CocoaLumberjack/Default
+  - HQDLNA (0.1.7):
     - CocoaAsyncSocket
-    - MRDLNA/MRC (= 0.1.1)
-  - MRDLNA/MRC (0.1.1):
+    - CocoaLumberjack (~> 3.0.0)
+    - HQDLNA/MRC (= 0.1.7)
+  - HQDLNA/MRC (0.1.7):
     - CocoaAsyncSocket
+    - CocoaLumberjack (~> 3.0.0)
 
 DEPENDENCIES:
-  - MRDLNA (from `../`)
+  - HQDLNA (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - CocoaAsyncSocket
+    - CocoaLumberjack
 
 EXTERNAL SOURCES:
-  MRDLNA:
-    :path: ../
+  HQDLNA:
+    :path: "../"
 
 SPEC CHECKSUMS:
-  CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
-  MRDLNA: 46b369c7c36f5d3ac41041b0a2db3e473d43bc7e
+  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
+  HQDLNA: 20dabfc5e21f876cc9f36f9ac49106953b4393e1
 
-PODFILE CHECKSUM: bb69de52cb74a8e723cd916e3106c142b2fd14d3
+PODFILE CHECKSUM: 55fac31cd8295d3926fe32b0cd54ab5898a994d5
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.11.0

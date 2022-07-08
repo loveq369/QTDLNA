@@ -10,6 +10,7 @@
 #import "CLUPnPServer.h"
 #import "GCDAsyncUdpSocket.h"
 #import "CLGDataXMLNode.h"
+#import "CLDDlogSetting.h"
 
 @interface CLUPnPServer ()<GCDAsyncUdpSocketDelegate>
 
@@ -101,6 +102,7 @@
 }
 - (void)refresh
 {
+    [_udpSocket closeAfterSending];
     [_udpSocket close];
 
     [self start];
@@ -113,28 +115,16 @@
 
 
 #pragma mark -- GCDAsyncUdpSocketDelegate
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address
-{
-    CLLog(@"udpSocket连接成功----%@",address);
-    if (self.delegate && [self.delegate respondsToSelector:@selector(upnpDidConnectToService:)]) {
-        [self.delegate upnpDidConnectToService:self];
-    }
-}
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error
-{
-    CLLog(@"udpSocket连接失败：%@", error);
-    if (self.delegate && [self.delegate respondsToSelector:@selector(upnpDidNotConnectOnError:)]) {
-        [self.delegate upnpDidNotConnectOnError:error];
-    }
-}
-
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
 {
-    CLLog(@"udpSocket发送信息成功");
+//    DDLogInfo(@"airPlay-udpSocket发送信息成功");
      __weak typeof (self) weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(weakSelf.searchTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         weakSelf.receiveDevice = NO;
-        CLLog(@"udpSocket搜索结束");
+        DDLogInfo(@"airPlay-udpSocket搜索结束");
+        if (weakSelf.delegate && [weakSelf.delegate respondsToSelector:@selector(upnpDidEndSearch)]){
+            [weakSelf.delegate upnpDidEndSearch];
+        }
     });
 }
 
@@ -145,10 +135,7 @@
 
 - (void)udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError * _Nullable)error
 {
-    CLLog(@"udpSocket断开连接:%@", error);
-    if (self.delegate && [self.delegate respondsToSelector:@selector(upnpDidCloseWithError:)]) {
-        [self.delegate upnpDidCloseWithError:error];
-    }
+    DDLogInfo(@"airPlay-udpSocket关闭:%@", error);
 }
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(nullable id)filterContext
@@ -161,7 +148,6 @@
 {
     @autoreleasepool {
         NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-//        CLLog(@"udpSocket result:%@", string);
         if ([string hasPrefix:@"NOTIFY"]) {
             NSString *serviceType = [self headerValueForKey:@"NT:" inData:string];
             if ([serviceType isEqualToString:serviceType_AVTransport]) {
@@ -169,15 +155,15 @@
                 NSString *usn = [self headerValueForKey:@"USN:" inData:string];
                 NSString *ssdp = [self headerValueForKey:@"NTS:" inData:string];
                 if ([self isNilString:ssdp]) {
-                    CLLog(@"ssdp = nil");
+                    DDLogInfo(@"airPlay-ssdp = nil");
                     return;
                 }
                 if ([self isNilString:usn]) {
-                    CLLog(@"usn = nil");
+                    DDLogInfo(@"airPlay-usn = nil");
                     return;
                 }
                 if ([self isNilString:location]) {
-                    CLLog(@"location = nil");
+                    DDLogInfo(@"airPlay-location = nil");
                     return;
                 }
                 if ([ssdp isEqualToString:@"ssdp:alive"]) {
@@ -199,11 +185,11 @@
             NSString *location = [self headerValueForKey:@"Location:" inData:string];
             NSString *usn = [self headerValueForKey:@"USN:" inData:string];
             if ([self isNilString:usn]) {
-                CLLog(@"usn = nil");
+                DDLogInfo(@"airPlay-usn = nil");
                 return;
             }
             if ([self isNilString:location]) {
-                CLLog(@"location = nil");
+                DDLogInfo(@"airPlay-location = nil");
                 return;
             }
             dispatch_async(_queue, ^{
@@ -220,7 +206,7 @@
     if (!device) {
         return;
     }
-//    NSLog(@"%@",device.description);
+//    DDLogInfo(@"%@",device.description);
     [self.deviceDictionary setObject:device forKey:usn];
     [self onChange];
 }

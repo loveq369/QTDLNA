@@ -1,23 +1,22 @@
 {
-  "name": "MRDLNA",
-  "version": "0.1.1",
+  "name": "HQDLNA",
+  "version": "0.1.7",
   "summary": "DLNA投屏",
-  "description": "DLNA投屏,支持各大主流盒子互联网电视.",
-  "homepage": "https://github.com/MQL9011/MRDLNA",
+  "description": "(基于MRDLNA)DLNA投屏,支持各大主流盒子互联网电视.",
+  "homepage": "https://github.com/sillker/HQDLNA",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
   },
   "authors": {
-    "MQL9011": "301063915@qq.com"
+    "sillker": "269055130@qq.com"
   },
   "source": {
-    "git": "https://github.com/MQL9011/MRDLNA.git",
-    "tag": "0.1.1"
+    "git": "https://github.com/sillker/HQDLNA.git",
+    "tag": "0.1.7"
   },
-  "social_media_url": "http://cocomccree.cn/",
   "platforms": {
-    "ios": "8.0"
+    "ios": "9.0"
   },
   "source_files": "MRDLNA/Classes/ARC/**/*",
   "libraries": [
@@ -28,6 +27,9 @@
   ],
   "dependencies": {
     "CocoaAsyncSocket": [
+
+    ],
+    "CocoaLumberjack": [
 
     ]
   },

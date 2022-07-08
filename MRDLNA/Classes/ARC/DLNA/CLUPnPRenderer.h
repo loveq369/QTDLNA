@@ -34,6 +34,12 @@
 - (void)setAVTransportURL:(NSString *)urlStr;
 
 /**
+ 设置投屏地址
+ @param urlStr typeStr:"0"视频/"1"图片url
+ */
+- (void)setAVTransportURL:(NSString *)urlStr WithType:(NSString*)typeStr;
+
+/**
  设置下一个播放地址
  @param urlStr 下一个视频url
  */

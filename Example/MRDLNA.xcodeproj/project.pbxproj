@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		15EC5373894FC4A06B39F31D /* Pods_MRDLNA_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 270D84EDD3A5655487B1AAA3 /* Pods_MRDLNA_Example.framework */; };
-		53E010B4A135BAB0C25A461E /* Pods_MRDLNA_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF659AF0E67B9537D05DB807 /* Pods_MRDLNA_Tests.framework */; };
+		532A8E01F7521195573356D4 /* libPods-MRDLNA_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 621CBACC42CBE682EAC141C9 /* libPods-MRDLNA_Tests.a */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -27,6 +26,7 @@
 		8439C2CD209C38FD001125BC /* DLNAControlVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8439C2C8209C38FD001125BC /* DLNAControlVC.m */; };
 		8439C2CE209C38FD001125BC /* DLNASearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8439C2C9209C38FD001125BC /* DLNASearchVC.m */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
+		CE8482EEC211C9E3376705C0 /* libPods-MRDLNA_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 161AC3AB0623846A54CA96BC /* libPods-MRDLNA_Example.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,7 +40,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		270D84EDD3A5655487B1AAA3 /* Pods_MRDLNA_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MRDLNA_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		161AC3AB0623846A54CA96BC /* libPods-MRDLNA_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MRDLNA_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		428DBE8FD792AA40C92E9872 /* Pods-MRDLNA_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRDLNA_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MRDLNA_Example/Pods-MRDLNA_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		472C15D1850376CB9657DAAF /* Pods-MRDLNA_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRDLNA_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-MRDLNA_Example/Pods-MRDLNA_Example.release.xcconfig"; sourceTree = "<group>"; };
 		4E80303D372680F5E26BAD78 /* MRDLNA.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = MRDLNA.podspec; path = ../MRDLNA.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -63,6 +63,7 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		621CBACC42CBE682EAC141C9 /* libPods-MRDLNA_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MRDLNA_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8439C2C7209C38FD001125BC /* DLNAControlVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DLNAControlVC.xib; sourceTree = "<group>"; };
 		8439C2C8209C38FD001125BC /* DLNAControlVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNAControlVC.m; sourceTree = "<group>"; };
@@ -74,7 +75,6 @@
 		9652E32BFD79ED1B12D6FF98 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		D7C58695D61B78E46798DEA4 /* Pods-MRDLNA_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRDLNA_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MRDLNA_Tests/Pods-MRDLNA_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		E1CB6A307D1E45F66214FCC2 /* Pods-MRDLNA_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRDLNA_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MRDLNA_Tests/Pods-MRDLNA_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		EF659AF0E67B9537D05DB807 /* Pods_MRDLNA_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MRDLNA_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +85,7 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				15EC5373894FC4A06B39F31D /* Pods_MRDLNA_Example.framework in Frameworks */,
+				CE8482EEC211C9E3376705C0 /* libPods-MRDLNA_Example.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,7 +96,7 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				53E010B4A135BAB0C25A461E /* Pods_MRDLNA_Tests.framework in Frameworks */,
+				532A8E01F7521195573356D4 /* libPods-MRDLNA_Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,8 +142,8 @@
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
-				270D84EDD3A5655487B1AAA3 /* Pods_MRDLNA_Example.framework */,
-				EF659AF0E67B9537D05DB807 /* Pods_MRDLNA_Tests.framework */,
+				161AC3AB0623846A54CA96BC /* libPods-MRDLNA_Example.a */,
+				621CBACC42CBE682EAC141C9 /* libPods-MRDLNA_Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -228,8 +228,6 @@
 				6003F586195388D20070C39A /* Sources */,
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
-				E7899DD10B8ADB7ACE53FE04 /* [CP] Embed Pods Frameworks */,
-				C12DF20B391ADDA7575D1D92 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -248,8 +246,6 @@
 				6003F5AA195388D20070C39A /* Sources */,
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
-				30EB5211255F4341A371288F /* [CP] Embed Pods Frameworks */,
-				904AE3DF7171E1E0F807F2DE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -319,21 +315,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		30EB5211255F4341A371288F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MRDLNA_Tests/Pods-MRDLNA_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		5A6960012D94D384BD9A9543 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -368,56 +349,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		904AE3DF7171E1E0F807F2DE /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MRDLNA_Tests/Pods-MRDLNA_Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C12DF20B391ADDA7575D1D92 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MRDLNA_Example/Pods-MRDLNA_Example-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E7899DD10B8ADB7ACE53FE04 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-MRDLNA_Example/Pods-MRDLNA_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
-				"${BUILT_PRODUCTS_DIR}/MRDLNA/MRDLNA.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MRDLNA.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MRDLNA_Example/Pods-MRDLNA_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

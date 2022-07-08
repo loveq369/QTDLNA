@@ -23,14 +23,8 @@
 /// 搜索失败
 - (void)upnpSearchErrorWithError:(NSError *)error;
 
-/// 连接成功
-- (void)upnpDidConnectToService:(CLUPnPServer *)service;
-
-/// 连接失败
-- (void)upnpDidNotConnectOnError:(NSError *)error;
-
-/// 断开连接
-- (void)upnpDidCloseWithError:(NSError *)error;
+///搜索结束
+- (void)upnpDidEndSearch;
 
 @end
 

@@ -9,8 +9,12 @@
 #import "CLUPnP.h"
 #import "CLGDataXMLNode.h"
 #import "CLUPnPAction.h"
+#import "CLDDlogSetting.h"
 
-#define VideoDIDL @"<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:sec=\"http://www.sec.co.kr/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\"><item id=\"f-0\" parentID=\"0\" restricted=\"0\"><dc:title>Video</dc:title><dc:creator>Anonymous</dc:creator><upnp:class>object.item.videoItem</upnp:class><res protocolInfo=\"http-get:*:video/*:DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000\" sec:URIType=\"public\">%@</res></item></DIDL-Lite>"
+#define VideoDIDL(c) [NSString stringWithFormat:@"<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:sec=\"http://www.sec.co.kr/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\"><item id=\"f-0\" parentID=\"0\" restricted=\"0\"><dc:title>Video</dc:title><dc:creator>Anonymous</dc:creator><upnp:class>object.item.videoItem</upnp:class><res protocolInfo=\"http-get:*:video/*:DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000\" sec:URIType=\"public\">%@</res></item></DIDL-Lite>",c]
+
+
+#define ImageDIDL @"<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dlna=\"urn:schemas-dlna-org:metadata-1-0/\" xmlns:sec=\"http://www.sec.co.kr/\"><item id=\"filePath\" parentID=\"0\" restricted=\"1\"><upnp:class>object.item.imageItem</upnp:class><dc:title>IMAG1466</dc:title><dc:creator>Unknown Artist</dc:creator><upnp:artist>Unknown Artist</upnp:artist><upnp:albumArtURI>http://IP:PORT/filePath</upnp:albumArtURI><upnp:album>Unknown Album</upnp:album><res protocolInfo=\"http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_LRG;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000\">http://IP:PORT/filePath</res></item></DIDL-Lite>"
 
 @implementation CLUPnPRenderer
 
@@ -30,13 +34,28 @@
 
 #pragma mark -
 #pragma mark -- AVTransport动作 --
-- (void)setAVTransportURL:(NSString *)urlStr
+- (void)setAVTransportURL:(NSString *)urlStr WithType:(NSString*)typeStr
 {
+//    if (!urlStr || !urlStr.length) {
+//        [self _ErrorDomain:[NSError errorWithDomain:@"" code:-1 userInfo:nil]];
+//        return;
+//    }
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"SetAVTransportURI"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [action setArgumentValue:urlStr forName:@"CurrentURI"];
-    [action setArgumentValue:VideoDIDL forName:@"CurrentURIMetaData"];
+    NSString *value = (typeStr&&[typeStr isEqualToString:@"1"])? ImageDIDL:VideoDIDL(urlStr);
+    [action setArgumentValue:value forName:@"CurrentURIMetaData"];
     [self postRequestWith:action];
+}
+
+- (void)setAVTransportURL:(NSString *)urlStr
+{
+//    CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"SetAVTransportURI"];
+//    [action setArgumentValue:@"0" forName:@"InstanceID"];
+//    [action setArgumentValue:urlStr forName:@"CurrentURI"];
+//    [action setArgumentValue:VideoDIDL(urlStr) forName:@"CurrentURIMetaData"];
+//    [self postRequestWith:action];
+    [self setAVTransportURL:urlStr WithType:@""];
 }
 
 - (void)setNextAVTransportURI:(NSString *)urlStr
@@ -44,7 +63,7 @@
     CLUPnPAction *action = [[CLUPnPAction alloc] initWithAction:@"SetNextAVTransportURI"];
     [action setArgumentValue:@"0" forName:@"InstanceID"];
     [action setArgumentValue:urlStr forName:@"NextURI"];
-    [action setArgumentValue:@"" forName:@"NextURIMetaData"];
+    [action setArgumentValue:VideoDIDL(urlStr) forName:@"NextURIMetaData"];
     [self postRequestWith:action];
     
 }
@@ -138,21 +157,28 @@
 #pragma mark -- 发送动作请求 --
 - (void)postRequestWith:(CLUPnPAction *)action
 {
-    CLLog(@"CLUPnPAction--%@",action.getSOAPAction);
+    DDLogInfo(@"airPlay-CLUPnPAction--%@",action.getSOAPAction);
     NSURLSession *session = [NSURLSession sharedSession];
     NSURL *url = [NSURL URLWithString:[action getPostUrlStrWith:_model]];
     NSString *postXML = [action getPostXMLFile];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     request.HTTPMethod = @"POST";
     [request addValue:@"text/xml" forHTTPHeaderField:@"Content-Type"];
+//    [request addValue:@"application/vnd.apple.mpegurl" forHTTPHeaderField:@"Content-Type"];
     [request addValue:[action getSOAPAction] forHTTPHeaderField:@"SOAPAction"];
     
-    [self requestAddHqHeader:request];
+    [self addRequestCustomHeader:request];
     
     request.HTTPBody = [postXML dataUsingEncoding:NSUTF8StringEncoding];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error || data == nil) {
             [self _UndefinedResponse:nil postXML:postXML];
+            if([error.userInfo.allKeys containsObject:@"NSUnderlyingError"]){
+                NSString *errorStr = [NSString stringWithFormat:@"%@",error.userInfo[@"NSUnderlyingError"]];
+                if([errorStr containsString:@"kCFErrorDomainCFNetwork"]){
+                    [self _ErrorDomain:error];
+                }
+            }
             return;
         } else {
             [self parseRequestResponseData:data postXML:postXML];
@@ -160,8 +186,9 @@
     }];
     [dataTask resume];
 }
-//添加User-Agent和referer（后续可能会效验）
-- (void)requestAddHqHeader:(NSMutableURLRequest *)request
+
+//添加User-Agent和referer
+- (void)addRequestCustomHeader:(NSMutableURLRequest *)request
 {
     if (self.userAgent.length) {
         [request setValue:self.userAgent forHTTPHeaderField:@"User-Agent"];
@@ -321,10 +348,18 @@
 
 - (void)_UndefinedResponse:(NSString *)xmlStr postXML:(NSString *)postXML
 {
-    NSLog(@"===========发送信息:%@ \n",postXML);
-    NSLog(@"===========响应信息:%@ \n",xmlStr);
+    DDLogInfo(@"airPlay-发送信息:%@ \n",postXML);
+    DDLogInfo(@"airPlay-响应信息:%@ \n",xmlStr);
     if ([self.delegate respondsToSelector:@selector(upnpUndefinedResponse:postXML:)]) {
         [self.delegate upnpUndefinedResponse:xmlStr postXML:postXML];
+    }
+}
+
+-(void)_ErrorDomain:(NSError*)error
+{
+    DDLogInfo(@"airPlay-网络发生错误:%@",error);
+    if([self.delegate respondsToSelector:@selector(upnpErrorDomain:)]){
+        [self.delegate upnpErrorDomain:error];
     }
 }
 

@@ -1,0 +1,6 @@
+framework module HQDLNA {
+  umbrella header "HQDLNA-umbrella.h"
+
+  export *
+  module * { export * }
+}
