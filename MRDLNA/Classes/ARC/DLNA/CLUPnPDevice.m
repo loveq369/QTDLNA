@@ -46,6 +46,9 @@
             if ([ele.name isEqualToString:@"modelName"]) {
                 self.modelName = [ele stringValue];
             }
+            if ([ele.name isEqualToString:@"deviceType"]) {
+                self.deviceType = [ele stringValue];
+            }
             if ([ele.name isEqualToString:@"serviceList"]) {
                 NSArray *serviceListArray = [ele children];
                 for (int k = 0; k < [serviceListArray count]; k++) {

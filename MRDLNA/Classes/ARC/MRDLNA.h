@@ -39,6 +39,8 @@ typedef NS_ENUM(NSInteger, DLNAPlayState) {
 
 @optional
 
+- (void)dlnaPlayDidConnent;
+
 ///投屏成功开始播放
 - (void)dlnaStartPlay;
 - (void)dlnaEndPlay;

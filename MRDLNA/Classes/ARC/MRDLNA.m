@@ -93,17 +93,6 @@
 
 - (void)timerEvent:(NSTimer *)timer
 {
-//    if (self.duration > 0) {
-//        self.duration --;
-//    }else{
-//        self.duration = 10;
-//        [_timer invalidate];
-//        _timer = nil;
-//        self.isRefreshing = NO;
-//        [self.tableView reloadData];
-//        DDLogInfo(@"停止搜索");
-//    }
-    
     [self.render getPositionInfo];
 }
 
@@ -125,15 +114,9 @@
     self.render.referer = self.referer;
     
 //    [self.render stop];
-    [self.render setAVTransportURL:self.playUrl];
+    [self playTheURL:self.playUrl];
     
     [self.render getVolume];
-    
-    if (!_timer) {
-        _timer = [NSTimer timerWithTimeInterval:2 target:self selector:@selector(timerEvent:) userInfo:nil repeats:YES];
-        [_timer fire];
-        [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
-    }
 }
 /**
  退出DLNA
@@ -141,8 +124,8 @@
 - (void)endDLNA
 {
     DDLogInfo(@"airPlay-endDLNA");
+    self.isConnected = NO;//主动置为NO，不然stop指令可能是失败的
     [self.render stop];
-    
     [self removeTimer];
 }
 
@@ -217,7 +200,15 @@
 - (void)playTheURL:(NSString *)url
 {
     self.playUrl = url;
+    [self removeTimer];
     [self.render setAVTransportURL:url];
+    
+    
+    if (!_timer) {
+        _timer = [NSTimer timerWithTimeInterval:3 target:self selector:@selector(timerEvent:) userInfo:nil repeats:YES];
+        [_timer fire];
+        [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
+    }
 }
 
 #pragma mark -- 搜索协议CLUPnPDeviceDelegate回调
@@ -263,12 +254,24 @@
 #pragma mark - CLUPnPResponseDelegate
 - (void)upnpSetAVTransportURIResponse
 {
-    self.isConnected = YES;
+//    self.isConnected = YES;
+    
     [self.render play];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.playDelegate && [self.playDelegate respondsToSelector:@selector(dlnaStartPlay)]) {
             [self.playDelegate dlnaStartPlay];
+        }
+    });
+    
+    if (self.isConnected) {
+        return;
+    }
+    self.isConnected = YES;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.playDelegate && [self.playDelegate respondsToSelector:@selector(dlnaPlayDidConnent)]) {
+            [self.playDelegate dlnaPlayDidConnent];
         }
     });
 }
@@ -280,17 +283,6 @@
         [self.render play];
 
     }
-//    if ([info.currentTransportState isEqualToString:@"PLAYING"]) {
-//        if (!_timer) {
-//            _timer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(timerEvent:) userInfo:nil repeats:YES];
-//            [_timer fire];
-//            [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
-//        }
-//    }
-//    if ([info.currentTransportState isEqualToString:@"STOPPED"]) {
-//        [_timer invalidate];
-//        _timer = nil;
-//    }
 }
 
 - (void)upnpPlayResponse

@@ -19,6 +19,8 @@
 @property (nonatomic, copy) NSString *friendlyName;
 @property (nonatomic, copy) NSString *modelName;
 
+@property (nonatomic, copy) NSString *deviceType;
+
 @property (nonatomic, strong) CLServiceModel *AVTransport;
 @property (nonatomic, strong) CLServiceModel *RenderingControl;
 
