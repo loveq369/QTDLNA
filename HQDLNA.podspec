@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HQDLNA'
-  s.version          = '0.1.8'
+  s.version          = '0.1.9'
   s.summary          = 'DLNA投屏'
 
 
@@ -24,8 +24,9 @@ Pod::Spec.new do |s|
   #s.social_media_url = 'http://cocomccree.cn/'
 
   s.platform     = :ios, "9.0"
+  s.requires_arc = true
 
-  s.source_files = 'MRDLNA/Classes/ARC/**/*'
+  s.source_files = 'MRDLNA/**/*{h,m}'
   
   # s.resource_bundles = {
   #   'MRDLNA' => ['MRDLNA/Assets/*.png']
@@ -42,8 +43,8 @@ Pod::Spec.new do |s|
       'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES'
   }
   
-  s.subspec 'MRC' do |sp|
-      sp.source_files = 'MRDLNA/Classes/MRC/**/*'
-      sp.requires_arc = false
-  end
+  #s.subspec 'MRC' do |sp|
+  #    sp.source_files = 'MRDLNA/Classes/MRC/**/*'
+  #    sp.requires_arc = false
+  #end
 end

@@ -1,0 +1,3 @@
+[submodule "MRDLNA/SSLGata"]
+	path = MRDLNA/SSLGata
+	url = https://github.com/sillker/SSLGata.git
