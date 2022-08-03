@@ -3,7 +3,7 @@ platform :ios, '9.0'
 inhibit_all_warnings!
 
 target 'MRDLNA_Example' do
-  pod 'HQDLNA', :path => '../'
+  pod 'QTDLNA', :path => '../'
 
   target 'MRDLNA_Tests' do
     inherit! :search_paths
