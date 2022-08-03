@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'sillker' => '269055130@qq.com' }
-  s.source           = { :git => 'https://github.com/sillker/QTDLNA.git', :tag => s.version}
+  s.source           = { :git => 'https://github.com/sillker/QTDLNA.git', :tag => s.version, :submodules => true}
   #s.social_media_url = 'http://cocomccree.cn/'
 
   s.platform     = :ios, "9.0"
